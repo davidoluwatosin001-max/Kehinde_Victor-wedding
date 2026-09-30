@@ -1,0 +1,274 @@
+{
+  "settings": {
+    "coupleNames": "Kehinde & Victor",
+    "weddingDate": "2026-11-19T10:00:00+01:00",
+    "tagline": "Two Hearts. One Journey Forever.",
+    "hashtag": "Ayobamidele '26",
+    "bankName": "Guaranty Trust Bank (GTBank)",
+    "accountName": "Victor Oluwatosin Odudu & Kehinde Elizabeth",
+    "accountNumber": "0123456789",
+    "paymentInstructions": "Please include your name in the payment reference or narration so we can identify and acknowledge your loving blessing.",
+    "storyTitle": "Our Love Story: How Two Hearts Found Their Forever",
+    "storyContent": [
+      "From the very first moment our paths crossed, God began writing a story that was greater than anything we could have planned ourselves.",
+      "Through seasons of friendship, prayers, laughter, and shared dreams, our love deepened into a quiet certainty that we were meant to walk this earthly journey as one.",
+      "Now, hand in hand with grateful hearts and our families' blessings, we invite our cherished family and friends to stand with us as we make our holy vows before God."
+    ],
+    "announcement": "Kindly come at least a day before as requested by the couple to join us for the Engagement ceremony!",
+    "showAnnouncement": true,
+    "rsvpDeadline": "2026-10-25T23:59:59+01:00",
+    "phone1": "0813 676 9807",
+    "phone2": "0907 724 9194"
+  },
+  "events": [
+    {
+      "id": "evt-engagement",
+      "name": "Traditional Engagement Ceremony",
+      "date": "Wednesday, 18th Nov 2026",
+      "time": "4:00 PM prompt",
+      "venue": "21 Olawale Badmus Street",
+      "address": "Turaya Bus Stop, Mowe, Ogun State",
+      "description": "The traditional marriage rites and celebration of family heritage. Join us in vibrant traditional attire.",
+      "dressCode": "Traditional Elegance (Mustard Gold & Forest Green)",
+      "googleMapsUrl": "https://maps.google.com/?q=Turaya+Bus+Stop+Mowe+Ogun+State",
+      "isDayEvent": false
+    },
+    {
+      "id": "evt-white-wedding",
+      "name": "Holy Matrimony (Church Ceremony)",
+      "date": "Thursday, 19th Nov 2026",
+      "time": "10:00 AM prompt",
+      "venue": "RCCG Redemption Parish",
+      "address": "13 Habitation Of Hope Street, Near Turaya Guest House, Turaya Bus Stop, Mowe, Ogun State",
+      "description": "The solemnization of our holy matrimony and exchange of sacred vows before God and family.",
+      "dressCode": "Formal & Elegant (Suits, Gowns, Formal Traditional)",
+      "googleMapsUrl": "https://maps.google.com/?q=RCCG+Redemption+Parish+Turaya+Mowe",
+      "isDayEvent": true
+    },
+    {
+      "id": "evt-reception",
+      "name": "Wedding Reception & Celebration",
+      "date": "Thursday, 19th Nov 2026",
+      "time": "Follows immediately after church service",
+      "venue": "18/12 Castro Hall",
+      "address": "10 Ibukun Oluwa Street, Asolo Bus Stop, Mowe, Ogun State",
+      "description": "Banquet, toasts, traditional dancing, cutting of the cake, and memorable celebration.",
+      "dressCode": "Celebratory Glamour (Mustard Gold & Forest Green)",
+      "googleMapsUrl": "https://maps.google.com/?q=Castro+Hall+Asolo+Bus+Stop+Mowe",
+      "isDayEvent": true
+    }
+  ],
+  "guests": [
+    {
+      "id": "guest-1",
+      "code": "KV-VIP01",
+      "name": "Dr. & Mrs. Adeleke",
+      "email": "adeleke.family@example.com",
+      "phone": "08031234567",
+      "maxGuests": 2,
+      "allowedPlusOne": true,
+      "accommodationEligible": true,
+      "isVip": true,
+      "notes": "Special family table",
+      "createdAt": "2026-09-01T10:00:00Z"
+    },
+    {
+      "id": "guest-2",
+      "code": "KV-AB7K2",
+      "name": "Uncle Femi & Family",
+      "email": "femi.odudu@example.com",
+      "phone": "08098765432",
+      "maxGuests": 2,
+      "allowedPlusOne": false,
+      "accommodationEligible": true,
+      "isVip": false,
+      "notes": "Requires ground floor seating",
+      "createdAt": "2026-09-02T11:00:00Z"
+    },
+    {
+      "id": "guest-3",
+      "code": "KV-FRIEND9",
+      "name": "Blessing Emmanuel",
+      "email": "blessing.e@example.com",
+      "phone": "08123456789",
+      "maxGuests": 2,
+      "allowedPlusOne": true,
+      "accommodationEligible": false,
+      "isVip": false,
+      "createdAt": "2026-09-03T12:00:00Z"
+    }
+  ],
+  "rsvps": [
+    {
+      "invitationCode": "",
+      "guestName": "Chief & Mrs. Folorunsho",
+      "email": "folorunsho@example.com",
+      "phone": "08012345678",
+      "status": "Confirmed",
+      "guestCount": 2,
+      "attendingEvents": "White Wedding (Thu 19 Nov, 10am) / Reception 1:00pm",
+      "attendees": [
+        {
+          "name": "Chief Folorunsho"
+        },
+        {
+          "name": "Mrs. Folorunsho"
+        }
+      ],
+      "accommodationNeeded": false,
+      "message": "Warmest congratulations to Victor & Kehinde!",
+      "id": "rsvp-1790801620457",
+      "submittedAt": "2026-09-30T20:53:40.457Z"
+    },
+    {
+      "id": "rsvp-1",
+      "invitationCode": "KV-VIP01",
+      "guestName": "Dr. & Mrs. Adeleke",
+      "email": "adeleke.family@example.com",
+      "phone": "08031234567",
+      "status": "Confirmed",
+      "guestCount": 2,
+      "attendingEvents": "All Event (Engagement (Wed 18 Nov, 4pm) & White Wedding (Thu 19 Nov, 10am) / Reception)",
+      "attendees": [
+        {
+          "name": "Dr. Adeleke",
+          "dietaryPreference": "No seafood"
+        },
+        {
+          "name": "Mrs. Adeleke"
+        }
+      ],
+      "accommodationNeeded": true,
+      "message": "We rejoice with the Balogun and Odudu families! Looking forward to an unforgettable celebration.",
+      "submittedAt": "2026-09-10T14:30:00Z"
+    }
+  ],
+  "accommodation": [
+    {
+      "id": "acc-1",
+      "guestName": "Dr. & Mrs. Adeleke",
+      "email": "adeleke.family@example.com",
+      "phone": "08031234567",
+      "numberOfPeople": 2,
+      "checkInDate": "2026-11-18",
+      "checkOutDate": "2026-11-20",
+      "roomRequirement": "1 Double Room / King Suite",
+      "specialRequirements": "Quiet floor near venue",
+      "status": "Approved",
+      "createdAt": "2026-09-10T14:35:00Z"
+    }
+  ],
+  "gifts": [
+    {
+      "id": "gift-1",
+      "name": "Royal Dutch Oven Enamel Cookware Set",
+      "category": "Kitchen",
+      "description": "Heavy-gauge enameled cast iron cookware set in forest green finish with gold brass knobs.",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 120000
+    },
+    {
+      "id": "gift-2",
+      "name": "Philips Digital Air Fryer XXL",
+      "category": "Appliances",
+      "description": "Twin TurboStar rapid air technology for healthy home cooking and quick family meals.",
+      "quantity": 1,
+      "status": "Reserved",
+      "reservedBy": "Aunty Folashade",
+      "reservedEmail": "folashade@example.com",
+      "reservedPhone": "08055551234",
+      "reservedAt": "2026-09-15T09:00:00Z",
+      "estimatedValue": 165000
+    },
+    {
+      "id": "gift-3",
+      "name": "24-Piece Gold-Rimmed Porcelain Dinner Set",
+      "category": "Dining & Household",
+      "description": "Classic bone china dinnerware featuring fine gold trim and floral accents.",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 95000
+    },
+    {
+      "id": "gift-4",
+      "name": "LG Smart Inverter Microwave Oven 42L",
+      "category": "Appliances",
+      "description": "Even heating and defrosting with anti-bacterial easy-clean interior.",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 180000
+    },
+    {
+      "id": "gift-5",
+      "name": "Breville Barista Touch Espresso Machine",
+      "category": "Appliances",
+      "description": "Automated touchscreen bean-to-cup coffee maker for our morning routines.",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 350000
+    },
+    {
+      "id": "gift-6",
+      "name": "Egyptian Cotton Luxury 1000TC Bedding Set",
+      "category": "Bedroom & Living",
+      "description": "Ultra-soft breathable king-size bed linen set in warm cream with matching pillowcases.",
+      "quantity": 1,
+      "status": "Received",
+      "reservedBy": "The Groomsmen Collective",
+      "estimatedValue": 110000
+    },
+    {
+      "id": "gift-7",
+      "name": "Dyson V11 Cordless Vacuum Cleaner",
+      "category": "Dining & Household",
+      "description": "Intelligent suction optimization and deep whole-home filtration.",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 420000
+    },
+    {
+      "id": "gift-8",
+      "name": "Panasonic Super Heavy Blender & Grinder",
+      "category": "Kitchen",
+      "description": "High-power stainless steel blades ideal for blending beans, pepper, and smoothies.",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 75000
+    }
+  ],
+  "monetaryGifts": [
+    {
+      "id": "mg-1",
+      "senderName": "Pastor & Mrs. Benson",
+      "senderEmail": "benson@example.com",
+      "senderPhone": "08022223344",
+      "amount": 150000,
+      "paymentDate": "2026-09-12",
+      "bankUsed": "GTBank",
+      "reference": "REF-99210",
+      "message": "May the Lord establish your home in divine peace and abundance!",
+      "status": "Verified",
+      "createdAt": "2026-09-12T16:00:00Z"
+    }
+  ],
+  "customGifts": [],
+  "guestbook": [
+    {
+      "id": "msg-1",
+      "author": "Tunde & Seyi",
+      "relationship": "Friends of the Groom",
+      "message": "Congratulations Victor & Kehinde! Watching your journey blossom has been a true joy. Your home is blessed!",
+      "approved": true,
+      "createdAt": "2026-09-14T11:20:00Z"
+    },
+    {
+      "id": "msg-2",
+      "author": "Sister Grace Balogun",
+      "relationship": "Bride's Family",
+      "message": "My sweet sister Kehinde, you are marrying a wonderful gentleman. God's grace will preserve your union forever!",
+      "approved": true,
+      "createdAt": "2026-09-16T18:45:00Z"
+    }
+  ]
+}
