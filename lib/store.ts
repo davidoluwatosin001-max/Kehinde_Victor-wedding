@@ -299,6 +299,7 @@ function getInitialDatabase(): WeddingDatabase {
 let memoryCache: WeddingDatabase | null = null;
 const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "store.json");
+const TMP_DATA_FILE = path.join("/tmp", "wedding-store.json");
 
 function ensureDirectoryExists(dirPath: string) {
   try {
@@ -313,6 +314,22 @@ function ensureDirectoryExists(dirPath: string) {
 function loadDatabase(): WeddingDatabase {
   if (memoryCache) return memoryCache;
 
+  // 1. Check runtime /tmp cache first (for serverless environments)
+  try {
+    if (fs.existsSync(TMP_DATA_FILE)) {
+      const raw = fs.readFileSync(TMP_DATA_FILE, "utf-8");
+      const parsed = JSON.parse(raw);
+      memoryCache = {
+        ...getInitialDatabase(),
+        ...parsed,
+      };
+      return memoryCache!;
+    }
+  } catch (err) {
+    console.warn("[Store] Failed to read /tmp/wedding-store.json:", err);
+  }
+
+  // 2. Fall back to bundled project data file
   try {
     ensureDirectoryExists(DATA_DIR);
     if (fs.existsSync(DATA_FILE)) {
@@ -322,6 +339,12 @@ function loadDatabase(): WeddingDatabase {
         ...getInitialDatabase(),
         ...parsed,
       };
+      // Pre-seed /tmp
+      try {
+        fs.writeFileSync(TMP_DATA_FILE, JSON.stringify(memoryCache, null, 2), "utf-8");
+      } catch {
+        // Ignore if /tmp is not available
+      }
       return memoryCache!;
     }
   } catch (err) {
@@ -339,8 +362,14 @@ function saveDatabase(data: WeddingDatabase) {
   try {
     ensureDirectoryExists(DATA_DIR);
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
+  } catch {
+    // Expected on read-only serverless deployments
+  }
+
+  try {
+    fs.writeFileSync(TMP_DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
   } catch (err) {
-    console.warn("[Store] Failed to write data/store.json to disk:", err);
+    console.warn("[Store] Failed to write /tmp/wedding-store.json:", err);
   }
 }
 
@@ -370,7 +399,25 @@ export const store = {
     const db = loadDatabase();
     const clean = code.trim().toUpperCase();
     const guest = db.guests.find((g) => g.code.toUpperCase() === clean);
-    return guest || null;
+    if (guest) return guest;
+
+    // Check if an RSVP was submitted with this code
+    const rsvp = db.rsvps.find((r) => r.invitationCode && r.invitationCode.toUpperCase() === clean);
+    if (rsvp) {
+      return {
+        id: `guest-${rsvp.id}`,
+        code: rsvp.invitationCode,
+        name: rsvp.guestName,
+        email: rsvp.email,
+        phone: rsvp.phone,
+        maxGuests: rsvp.guestCount,
+        allowedPlusOne: rsvp.guestCount > 1,
+        accommodationEligible: rsvp.accommodationNeeded,
+        isVip: false,
+        createdAt: rsvp.submittedAt,
+      };
+    }
+    return null;
   },
   saveGuest: async (guest: Omit<Guest, "id" | "createdAt"> & { id?: string }): Promise<Guest> => {
     const db = loadDatabase();
