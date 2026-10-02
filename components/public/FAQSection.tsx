@@ -11,11 +11,11 @@ interface FAQItem {
 const faqs: FAQItem[] = [
   {
     q: "What is the dress code and official color code?",
-    a: "The official color code is Mustard Gold & Forest Green. Guests are warmly invited to wear either formal traditional attire (aso-oke, lace, agbada) or western formal attire (suits, elegant gowns).",
+    a: "The official color code is Mustard Gold & Forest Green. For Thursday 19th November (White Wedding & Reception), the dress code is Formal & Elegant (Suits, Gowns, Formal Traditional : Mustard Gold & Forest Green accents). For Wednesday 18th November (Engagement), the dress code is Traditional Attire (Mustard Gold & Forest Green accents).",
   },
   {
     q: "When is the RSVP deadline?",
-    a: "Kindly RSVP on or before Sunday, 25th October 2026. This allows us to finalize banquet seating, catering, and personalized guest favors.",
+    a: "Kindly confirm your attendance latest Monday, 2nd November 2026. This allows us to finalize banquet seating, catering, and personalized guest favors.",
   },
   {
     q: "Can I bring a plus-one?",

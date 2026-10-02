@@ -31,9 +31,9 @@ const initialSettings: SiteSettings = {
   weddingDate: "2026-11-19T10:00:00+01:00",
   tagline: "Two Hearts. One Journey Forever.",
   hashtag: "Ayobamidele '26",
-  bankName: "Guaranty Trust Bank (GTBank)",
-  accountName: "Victor Oluwatosin Odudu & Kehinde Elizabeth",
-  accountNumber: "0123456789",
+  bankName: "United Bank for Africa (UBA)",
+  accountName: "Victor Odudu",
+  accountNumber: "2061621174",
   paymentInstructions: "Please include your name in the payment reference or narration so we can identify and acknowledge your loving blessing.",
   storyTitle: "Our Love Story: How Two Hearts Found Their Forever",
   storyContent: [
@@ -43,7 +43,7 @@ const initialSettings: SiteSettings = {
   ],
   announcement: "Kindly come at least a day before as requested by the couple to join us for the Engagement ceremony!",
   showAnnouncement: true,
-  rsvpDeadline: "2026-10-25T23:59:59+01:00",
+  rsvpDeadline: "2026-11-02T23:59:59+01:00",
   phone1: "0813 676 9807",
   phone2: "0907 724 9194",
 };
@@ -69,7 +69,7 @@ export const initialEvents: WeddingEvent[] = [
     venue: "RCCG Redemption Parish",
     address: "13 Habitation Of Hope Street, Near Turaya Guest House, Turaya Bus Stop, Mowe, Ogun State",
     description: "The solemnization of our holy matrimony and exchange of sacred vows before God and family.",
-    dressCode: "Formal & Elegant (Suits, Gowns, Formal Traditional)",
+    dressCode: "Formal & Elegant (Suits, Gowns, Formal Traditional : Mustard Gold & Forest Green accents)",
     googleMapsUrl: "https://maps.google.com/?q=RCCG+Redemption+Parish+Turaya+Mowe",
     isDayEvent: true,
   },
@@ -81,7 +81,7 @@ export const initialEvents: WeddingEvent[] = [
     venue: "18/12 Castro Hall",
     address: "10 Ibukun Oluwa Street, Asolo Bus Stop, Mowe, Ogun State",
     description: "Banquet, toasts, traditional dancing, cutting of the cake, and memorable celebration.",
-    dressCode: "Celebratory Glamour (Mustard Gold & Forest Green)",
+    dressCode: "Formal & Elegant (Suits, Gowns, Formal Traditional : Mustard Gold & Forest Green accents)",
     googleMapsUrl: "https://maps.google.com/?q=Castro+Hall+Asolo+Bus+Stop+Mowe",
     isDayEvent: true,
   },
@@ -416,27 +416,91 @@ export const store = {
     const db = loadDatabase();
     const existingIndex = db.rsvps.findIndex(
       (r) =>
-        (data.invitationCode && r.invitationCode.toLowerCase() === data.invitationCode.toLowerCase()) ||
+        (data.invitationCode && data.invitationCode.trim() !== "" && r.invitationCode.toLowerCase() === data.invitationCode.toLowerCase()) ||
         r.email.toLowerCase() === data.email.toLowerCase()
     );
 
+    // Generate clean unique alphanumeric guest code (e.g. KV-8F4X2)
+    const generateUniqueCode = (providedCode?: string): string => {
+      if (providedCode && providedCode.trim() !== "") {
+        return providedCode.trim().toUpperCase();
+      }
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let code = "";
+      let isDuplicate = true;
+      while (isDuplicate) {
+        code = "KV-";
+        for (let i = 0; i < 5; i++) {
+          code += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        isDuplicate =
+          db.rsvps.some((r) => r.invitationCode && r.invitationCode.toUpperCase() === code) ||
+          db.guests.some((g) => g.code && g.code.toUpperCase() === code);
+      }
+      return code;
+    };
+
     if (existingIndex !== -1) {
+      const existing = db.rsvps[existingIndex];
+      const finalCode = existing.invitationCode && existing.invitationCode.trim() !== ""
+        ? existing.invitationCode
+        : generateUniqueCode(data.invitationCode);
+
       const updated: RSVP = {
-        ...db.rsvps[existingIndex],
+        ...existing,
         ...data,
+        invitationCode: finalCode,
         updatedAt: new Date().toISOString(),
       };
       db.rsvps[existingIndex] = updated;
+
+      // Keep guest table synchronized
+      const guestIdx = db.guests.findIndex((g) => g.code.toUpperCase() === finalCode.toUpperCase());
+      if (guestIdx === -1) {
+        db.guests.unshift({
+          id: `guest-${Date.now()}`,
+          code: finalCode,
+          name: updated.guestName,
+          email: updated.email,
+          phone: updated.phone,
+          maxGuests: updated.guestCount,
+          allowedPlusOne: updated.guestCount > 1,
+          accommodationEligible: updated.accommodationNeeded,
+          isVip: false,
+          createdAt: new Date().toISOString(),
+        });
+      }
+
       saveDatabase(db);
       return { rsvp: updated, isUpdate: true };
     }
 
+    const finalCode = generateUniqueCode(data.invitationCode);
     const newRSVP: RSVP = {
       ...data,
+      invitationCode: finalCode,
       id: `rsvp-${Date.now()}`,
       submittedAt: new Date().toISOString(),
     };
     db.rsvps.unshift(newRSVP);
+
+    // Auto-create matching guest record
+    const existingGuest = db.guests.find((g) => g.code.toUpperCase() === finalCode.toUpperCase());
+    if (!existingGuest) {
+      db.guests.unshift({
+        id: `guest-${Date.now()}`,
+        code: finalCode,
+        name: newRSVP.guestName,
+        email: newRSVP.email,
+        phone: newRSVP.phone,
+        maxGuests: newRSVP.guestCount,
+        allowedPlusOne: newRSVP.guestCount > 1,
+        accommodationEligible: newRSVP.accommodationNeeded,
+        isVip: false,
+        createdAt: new Date().toISOString(),
+      });
+    }
+
     saveDatabase(db);
     return { rsvp: newRSVP, isUpdate: false };
   },

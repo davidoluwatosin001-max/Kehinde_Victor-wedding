@@ -29,6 +29,8 @@ export interface RSVP {
   status: RSVPStatus;
   guestCount: number;
   attendingEvents?: string;
+  attendingState?: string;
+  attendingCity?: string;
   attendees: RSVPAttendee[];
   accommodationNeeded: boolean;
   dietaryRequirements?: string;

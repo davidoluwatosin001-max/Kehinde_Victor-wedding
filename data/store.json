@@ -4,9 +4,9 @@
     "weddingDate": "2026-11-19T10:00:00+01:00",
     "tagline": "Two Hearts. One Journey Forever.",
     "hashtag": "Ayobamidele '26",
-    "bankName": "Guaranty Trust Bank (GTBank)",
-    "accountName": "Victor Oluwatosin Odudu & Kehinde Elizabeth",
-    "accountNumber": "0123456789",
+    "bankName": "United Bank for Africa (UBA)",
+    "accountName": "Victor Odudu",
+    "accountNumber": "2061621174",
     "paymentInstructions": "Please include your name in the payment reference or narration so we can identify and acknowledge your loving blessing.",
     "storyTitle": "Our Love Story: How Two Hearts Found Their Forever",
     "storyContent": [
@@ -16,7 +16,7 @@
     ],
     "announcement": "Kindly come at least a day before as requested by the couple to join us for the Engagement ceremony!",
     "showAnnouncement": true,
-    "rsvpDeadline": "2026-10-25T23:59:59+01:00",
+    "rsvpDeadline": "2026-11-02T23:59:59+01:00",
     "phone1": "0813 676 9807",
     "phone2": "0907 724 9194"
   },
@@ -41,7 +41,7 @@
       "venue": "RCCG Redemption Parish",
       "address": "13 Habitation Of Hope Street, Near Turaya Guest House, Turaya Bus Stop, Mowe, Ogun State",
       "description": "The solemnization of our holy matrimony and exchange of sacred vows before God and family.",
-      "dressCode": "Formal & Elegant (Suits, Gowns, Formal Traditional)",
+      "dressCode": "Formal & Elegant (Suits, Gowns, Formal Traditional : Mustard Gold & Forest Green accents)",
       "googleMapsUrl": "https://maps.google.com/?q=RCCG+Redemption+Parish+Turaya+Mowe",
       "isDayEvent": true
     },
@@ -53,12 +53,25 @@
       "venue": "18/12 Castro Hall",
       "address": "10 Ibukun Oluwa Street, Asolo Bus Stop, Mowe, Ogun State",
       "description": "Banquet, toasts, traditional dancing, cutting of the cake, and memorable celebration.",
-      "dressCode": "Celebratory Glamour (Mustard Gold & Forest Green)",
+      "dressCode": "Formal & Elegant (Suits, Gowns, Formal Traditional : Mustard Gold & Forest Green accents)",
       "googleMapsUrl": "https://maps.google.com/?q=Castro+Hall+Asolo+Bus+Stop+Mowe",
       "isDayEvent": true
     }
   ],
   "guests": [
+    {
+      "name": "Babajide Sanwo-olu ",
+      "email": "babajidesanwolu@gmail.com",
+      "phone": "08000116443",
+      "maxGuests": 1,
+      "allowedPlusOne": true,
+      "accommodationEligible": false,
+      "isVip": true,
+      "notes": "",
+      "code": "KV-99MQJ",
+      "id": "guest-1790819489061",
+      "createdAt": "2026-10-01T01:51:29.062Z"
+    },
     {
       "id": "guest-1",
       "code": "KV-VIP01",
@@ -84,18 +97,6 @@
       "isVip": false,
       "notes": "Requires ground floor seating",
       "createdAt": "2026-09-02T11:00:00Z"
-    },
-    {
-      "id": "guest-3",
-      "code": "KV-FRIEND9",
-      "name": "Blessing Emmanuel",
-      "email": "blessing.e@example.com",
-      "phone": "08123456789",
-      "maxGuests": 2,
-      "allowedPlusOne": true,
-      "accommodationEligible": false,
-      "isVip": false,
-      "createdAt": "2026-09-03T12:00:00Z"
     }
   ],
   "rsvps": [

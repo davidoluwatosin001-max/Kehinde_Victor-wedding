@@ -315,6 +315,9 @@ export default function AdminDashboardPage() {
                       <p className="text-sm font-semibold text-forest-deep">{r.guestName}</p>
                       <p className="text-[11px] text-charcoal/70">
                         {r.email} &middot; {r.phone} &middot; {r.guestCount} attendee(s)
+                        {(r.attendingState || r.attendingCity) && (
+                          <span> &middot; Attending from: <strong className="text-forest-deep">{[r.attendingCity, r.attendingState].filter(Boolean).join(", ")}</strong></span>
+                        )}
                       </p>
                       {r.message && (
                         <p className="text-xs italic text-gold mt-1">&ldquo;{r.message}&rdquo;</p>
@@ -473,6 +476,9 @@ export default function AdminDashboardPage() {
                     <h4 className="font-serif font-bold text-forest-deep text-base">{r.guestName}</h4>
                     <p className="text-xs text-charcoal/70">
                       Code: <strong className="font-mono text-forest">{r.invitationCode || "Direct"}</strong> &middot; Phone: {r.phone} &middot; Email: {r.email}
+                      {(r.attendingState || r.attendingCity) && (
+                        <span> &middot; Attending from: <strong className="text-forest-deep">{[r.attendingCity, r.attendingState].filter(Boolean).join(", ")}</strong></span>
+                      )}
                     </p>
                     {r.attendingEvents && (
                       <p className="text-xs font-semibold text-forest mt-1 bg-gold/15 px-2.5 py-1 rounded-lg w-fit border border-gold/30">

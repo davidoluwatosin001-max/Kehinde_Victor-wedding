@@ -237,7 +237,7 @@ export const GiftSection: React.FC = () => {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <span className="text-[10px] uppercase tracking-wider text-charcoal/60 font-semibold block">Bank</span>
-                  <span className="font-serif text-lg text-forest-deep font-bold">{settings?.bankName || "GTBank"}</span>
+                  <span className="font-serif text-lg text-forest-deep font-bold">{settings?.bankName || "United Bank for Africa (UBA)"}</span>
                 </div>
                 <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center border border-gold/40">
                   <Home className="w-4 h-4 text-forest" />
@@ -247,7 +247,7 @@ export const GiftSection: React.FC = () => {
               <div className="mb-4">
                 <span className="text-[10px] uppercase tracking-wider text-charcoal/60 font-semibold block">Account Name</span>
                 <span className="font-sans text-sm text-forest-deep font-medium">
-                  {settings?.accountName || "Victor Oluwatosin Odudu & Kehinde Elizabeth"}
+                  {settings?.accountName || "Victor Odudu"}
                 </span>
               </div>
 
@@ -255,7 +255,7 @@ export const GiftSection: React.FC = () => {
                 <div>
                   <span className="text-[10px] uppercase tracking-wider text-gold font-semibold block">Account Number</span>
                   <span className="font-mono text-xl sm:text-2xl tracking-widest text-forest-deep font-bold">
-                    {settings?.accountNumber || "0123456789"}
+                    {settings?.accountNumber || "2061621174"}
                   </span>
                 </div>
                 <Button

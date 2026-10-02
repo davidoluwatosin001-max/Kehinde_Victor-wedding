@@ -10,6 +10,8 @@ export const rsvpSchema = z.object({
   }),
   guestCount: z.coerce.number().min(1, "Guest count must be at least 1").max(2, "Number of attending guests cannot be more than 2 (you and 1 other guest)"),
   attendingEvents: z.string().default("All Events (Engagement (Wed 18 Nov, 4pm) & White Wedding (Thu 19 Nov, 10am) / Reception)"),
+  attendingState: z.string().optional().default(""),
+  attendingCity: z.string().optional().default(""),
   attendees: z.array(
     z.object({
       name: z.string().min(1, "Attendee name is required"),

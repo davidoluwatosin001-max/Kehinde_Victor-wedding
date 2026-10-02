@@ -2,10 +2,51 @@
 
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
-import { CheckCircle2, Search, Heart, Calendar, MapPin, Sparkles } from "lucide-react";
+import { CheckCircle2, Search, Heart, Calendar, MapPin, Sparkles, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { RSVPStatus, Guest } from "@/types";
+import { RSVPStatus, Guest, RSVP } from "@/types";
 import { generateGoogleCalendarUrl, generateICSContent } from "@/lib/utils";
+
+const NIGERIAN_STATES = [
+  "Lagos",
+  "Ogun",
+  "Oyo",
+  "Osun",
+  "Ondo",
+  "Ekiti",
+  "FCT - Abuja",
+  "Abia",
+  "Adamawa",
+  "Akwa Ibom",
+  "Anambra",
+  "Bauchi",
+  "Bayelsa",
+  "Benue",
+  "Borno",
+  "Cross River",
+  "Delta",
+  "Ebonyi",
+  "Edo",
+  "Enugu",
+  "Gombe",
+  "Imo",
+  "Jigawa",
+  "Kaduna",
+  "Kano",
+  "Katsina",
+  "Kebbi",
+  "Kogi",
+  "Kwara",
+  "Nasarawa",
+  "Niger",
+  "Plateau",
+  "Rivers",
+  "Sokoto",
+  "Taraba",
+  "Yobe",
+  "Zamfara",
+  "Outside Nigeria / International",
+];
 
 interface RSVPSectionProps {
   initialCode?: string;
@@ -17,10 +58,15 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
   const [isSearchingCode, setIsSearchingCode] = useState(false);
   const [lookupMessage, setLookupMessage] = useState("");
 
+  const [confirmedRSVP, setConfirmedRSVP] = useState<RSVP | null>(null);
+  const [copiedCode, setCopiedCode] = useState(false);
+
   const [formData, setFormData] = useState({
     guestName: "",
     email: "",
     phone: "",
+    attendingState: "Lagos",
+    attendingCity: "",
     status: "Confirmed" as RSVPStatus,
     guestCount: 1,
     attendingEvents: "All Events (Engagement (Wed 18 Nov, 4pm) & White Wedding (Thu 19 Nov, 10am) / Reception)",
@@ -122,6 +168,10 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
       }
 
       setIsUpdate(result.isUpdate);
+      setConfirmedRSVP(result.rsvp);
+      if (result.rsvp?.invitationCode) {
+        setCode(result.rsvp.invitationCode);
+      }
       setSubmitted(true);
       confetti({
         particleCount: 80,
@@ -184,7 +234,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
             <span className="w-10 h-px bg-gold/60" />
           </div>
           <p className="font-sans text-charcoal/80 text-sm sm:text-base max-w-xl mx-auto">
-            Kindly confirm your attendance by <span className="font-semibold text-forest">25th October 2026</span> so we can prepare an unforgettable experience for you.
+            Kindly confirm your attendance latest <span className="font-semibold text-forest">2nd November, 2026</span> so we can prepare an unforgettable experience for you.
           </p>
         </div>
 
@@ -202,6 +252,45 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
               <span className="font-semibold text-forest">{formData.status}</span>). We are truly blessed by your love and presence!
             </p>
 
+            {/* Generated Unique Code Box */}
+            {(confirmedRSVP?.invitationCode || code) && (
+              <div className="bg-[#FAF4E6] border-2 border-gold/70 rounded-2xl p-5 mb-6 max-w-lg mx-auto shadow-sm">
+                <span className="text-[11px] uppercase font-bold text-gold tracking-widest block mb-1">
+                  Your Unique Guest Pass Code
+                </span>
+                <div className="flex flex-wrap items-center justify-center gap-3 my-2">
+                  <span className="font-mono text-2xl sm:text-3xl font-extrabold text-forest tracking-wider bg-white px-4 py-1.5 rounded-xl border border-gold/40 shadow-inner">
+                    {confirmedRSVP?.invitationCode || code}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(confirmedRSVP?.invitationCode || code);
+                      setCopiedCode(true);
+                      setTimeout(() => setCopiedCode(false), 2500);
+                    }}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-forest text-ivory text-xs font-semibold hover:bg-forest/90 transition-all shadow-sm active:scale-95 cursor-pointer"
+                    title="Copy Code"
+                  >
+                    {copiedCode ? (
+                      <>
+                        <Check className="w-4 h-4 text-emerald-300" />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4 text-gold" />
+                        <span>Copy Code</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+                <p className="text-[11px] text-charcoal/80 mt-1">
+                  Please save or screenshot this unique pass code. It confirms your reserved seat and allows you to update your RSVP anytime!
+                </p>
+              </div>
+            )}
+
             <div className="bg-[#FAF4E6] border border-gold/40 rounded-2xl p-5 mb-8 text-left max-w-lg mx-auto shadow-sm">
               <div className="mb-3 pb-3 border-b border-gold/25">
                 <span className="text-[10px] uppercase font-bold text-gold tracking-widest block">
@@ -211,6 +300,16 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
                   {formData.attendingEvents}
                 </span>
               </div>
+              {(formData.attendingCity || formData.attendingState) && (
+                <div className="mb-3 pb-3 border-b border-gold/25">
+                  <span className="text-[10px] uppercase font-bold text-gold tracking-widest block">
+                    Attending From
+                  </span>
+                  <span className="font-sans font-semibold text-forest-deep text-sm">
+                    {[formData.attendingCity, formData.attendingState].filter(Boolean).join(", ")}
+                  </span>
+                </div>
+              )}
               <div className="flex items-start gap-3 mb-3">
                 <Calendar className="w-5 h-5 text-gold shrink-0 mt-0.5" />
                 <div>
@@ -362,6 +461,43 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
                       </button>
                     ))}
                   </div>
+                </div>
+              </div>
+
+              {/* Where are you attending from: State and City */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="attendingState" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1.5">
+                    Where Are You Attending From? (State) *
+                  </label>
+                  <select
+                    id="attendingState"
+                    required
+                    value={formData.attendingState}
+                    onChange={(e) => setFormData({ ...formData, attendingState: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-gold/40 bg-white/90 text-charcoal text-sm focus:outline-none focus:ring-2 focus:ring-forest cursor-pointer"
+                  >
+                    {NIGERIAN_STATES.map((st) => (
+                      <option key={st} value={st}>
+                        {st}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="attendingCity" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1.5">
+                    City / Town *
+                  </label>
+                  <input
+                    id="attendingCity"
+                    required
+                    type="text"
+                    placeholder="e.g. Ikeja, Abeokuta, Mowe, London, etc."
+                    value={formData.attendingCity}
+                    onChange={(e) => setFormData({ ...formData, attendingCity: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-gold/40 bg-white/90 text-charcoal text-sm focus:outline-none focus:ring-2 focus:ring-forest"
+                  />
                 </div>
               </div>
 
