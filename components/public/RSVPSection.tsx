@@ -95,12 +95,13 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
 
   const lookupInvitationCode = async (searchCode: string) => {
     if (!searchCode.trim()) return;
+    const cleanCode = searchCode.trim().toUpperCase();
     setIsSearchingCode(true);
     setLookupMessage("");
     setErrorMessage("");
 
     try {
-      const res = await fetch(`/api/rsvp/lookup?code=${encodeURIComponent(searchCode.trim())}`);
+      const res = await fetch(`/api/rsvp/lookup?code=${encodeURIComponent(cleanCode)}`);
       const data = await res.json();
 
       if (res.ok && data.guest) {
@@ -110,19 +111,59 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
           guestName: data.guest.name,
           email: data.guest.email || prev.email,
           phone: data.guest.phone || prev.phone,
+          attendingState: (data.guest as any).attendingState || prev.attendingState,
+          attendingCity: (data.guest as any).attendingCity || prev.attendingCity,
           guestCount: Math.min(prev.guestCount, Math.min(data.guest.maxGuests, 2)) || 1,
           accommodationNeeded: data.guest.accommodationEligible ? prev.accommodationNeeded : false,
         }));
         setLookupMessage(`Invitation found for ${data.guest.name} (Max guests: ${Math.min(data.guest.maxGuests, 2)})`);
-      } else {
-        setGuestLookup(null);
-        setLookupMessage("Invitation code not found. You can still RSVP with your details!");
+        return;
       }
     } catch {
-      setLookupMessage("Could not verify code. Please proceed with your name.");
-    } finally {
-      setIsSearchingCode(false);
+      // Proceed to local check
     }
+
+    // Check device local storage for previously generated code
+    if (typeof window !== "undefined") {
+      try {
+        const local = localStorage.getItem(`kv_guest_code_${cleanCode}`) || localStorage.getItem("kv_wedding_user_pass");
+        if (local) {
+          const parsed = JSON.parse(local);
+          if (parsed.invitationCode?.toUpperCase() === cleanCode || parsed.code?.toUpperCase() === cleanCode) {
+            setGuestLookup({
+              id: parsed.id || "local-guest",
+              code: cleanCode,
+              name: parsed.guestName || parsed.name,
+              email: parsed.email,
+              phone: parsed.phone,
+              maxGuests: parsed.guestCount || 1,
+              allowedPlusOne: (parsed.guestCount || 1) > 1,
+              accommodationEligible: parsed.accommodationNeeded || false,
+              isVip: false,
+              createdAt: parsed.submittedAt || new Date().toISOString(),
+            });
+            setFormData((prev) => ({
+              ...prev,
+              guestName: parsed.guestName || parsed.name || prev.guestName,
+              email: parsed.email || prev.email,
+              phone: parsed.phone || prev.phone,
+              attendingState: parsed.attendingState || prev.attendingState,
+              attendingCity: parsed.attendingCity || prev.attendingCity,
+              guestCount: Math.min(parsed.guestCount || prev.guestCount, 2),
+              attendingEvents: parsed.attendingEvents || prev.attendingEvents,
+              accommodationNeeded: parsed.accommodationNeeded ?? prev.accommodationNeeded,
+            }));
+            setLookupMessage(`Pass code verified for ${parsed.guestName || parsed.name}!`);
+            setIsSearchingCode(false);
+            return;
+          }
+        }
+      } catch {}
+    }
+
+    setGuestLookup(null);
+    setLookupMessage("Invitation code not found in registry. You can still RSVP with your details below!");
+    setIsSearchingCode(false);
   };
 
   const handleGuestCountChange = (count: number) => {
@@ -171,6 +212,12 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
       setConfirmedRSVP(result.rsvp);
       if (result.rsvp?.invitationCode) {
         setCode(result.rsvp.invitationCode);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("kv_wedding_user_pass", JSON.stringify(result.rsvp));
+            localStorage.setItem(`kv_guest_code_${result.rsvp.invitationCode.toUpperCase()}`, JSON.stringify(result.rsvp));
+          } catch {}
+        }
       }
       setSubmitted(true);
       confetti({
