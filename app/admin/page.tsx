@@ -21,7 +21,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { formatNaira, formatDate } from "@/lib/utils";
-import { AdminStats, Guest, RSVP, AccommodationRequest, GiftItem, MonetaryGift, SiteSettings } from "@/types";
+import { AdminStats, Guest, RSVP, AccommodationRequest, GiftItem, GiftStatus, MonetaryGift, SiteSettings } from "@/types";
 
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<
@@ -38,6 +38,7 @@ export default function AdminDashboardPage() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [adminGiftCategory, setAdminGiftCategory] = useState<string>("All");
 
   // Modals
   const [isAddGuestModalOpen, setIsAddGuestModalOpen] = useState(false);
@@ -137,6 +138,20 @@ export default function AdminDashboardPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ giftId }),
+      });
+      refreshAllData();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // Update Gift Status Action (Available, Reserved, Received)
+  const handleUpdateGiftStatus = async (giftId: string, status: GiftStatus) => {
+    try {
+      await fetch("/api/gifts/receive", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ giftId, status }),
       });
       refreshAllData();
     } catch (e) {
@@ -567,50 +582,115 @@ export default function AdminDashboardPage() {
       {activeTab === "gifts" && (
         <div className="space-y-6">
           <div className="card-luxury p-6 rounded-3xl border border-gold/40 shadow-sm space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="font-serif text-xl font-bold text-forest-deep">
-                Physical Registry Items ({gifts.length})
-              </h3>
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+              <div>
+                <h3 className="font-serif text-xl font-bold text-forest-deep">
+                  Physical Registry Items ({gifts.length})
+                </h3>
+                <p className="text-xs text-charcoal/60">
+                  Manage availability, reservations, and incoming wedding gifts.
+                </p>
+              </div>
+
+              {/* Category Filter */}
+              <div className="flex flex-wrap gap-2">
+                {["All", "Kitchen", "Home Appliances"].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setAdminGiftCategory(cat)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                      adminGiftCategory === cat
+                        ? "bg-forest text-ivory shadow-sm"
+                        : "bg-white text-charcoal border border-gold/40 hover:bg-gold/10"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
             </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {gifts.map((g) => (
-                <div key={g.id} className="p-4 rounded-2xl bg-white/70 border border-gold/30 flex flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-[10px] uppercase font-bold text-gold">{g.category}</span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          g.status === "Available"
-                            ? "bg-emerald-100 text-emerald-800"
-                            : g.status === "Reserved"
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-blue-100 text-blue-800"
-                        }`}
-                      >
-                        {g.status}
-                      </span>
+              {gifts
+                .filter((g) => {
+                  if (adminGiftCategory === "All") return true;
+                  if (adminGiftCategory === "Home Appliances") {
+                    return g.category === "Home Appliances" || g.category === "Appliances";
+                  }
+                  return g.category === adminGiftCategory;
+                })
+                .map((g) => (
+                  <div key={g.id} className="p-4 rounded-2xl bg-white/80 border border-gold/30 flex flex-col justify-between hover:shadow-md transition-all">
+                    <div>
+                      {/* Product Image */}
+                      {g.image && (
+                        <div className="w-full h-36 rounded-xl overflow-hidden mb-3 bg-gold/10 border border-gold/20">
+                          <img src={g.image} alt={g.name} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-[10px] uppercase font-bold text-gold px-2 py-0.5 rounded-md bg-gold/10">{g.category}</span>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            g.status === "Available"
+                              ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                              : g.status === "Reserved"
+                              ? "bg-amber-100 text-amber-800 border border-amber-300"
+                              : "bg-blue-100 text-blue-800 border border-blue-300"
+                          }`}
+                        >
+                          {g.status}
+                        </span>
+                      </div>
+                      <h4 className="font-serif font-bold text-forest-deep text-base">{g.name}</h4>
+                      <p className="text-xs text-charcoal/70 line-clamp-2 mt-1">{g.description}</p>
+                      {g.reservedBy && (
+                        <div className="text-xs font-semibold text-forest mt-2 bg-[#FAF4E6] p-2.5 rounded-xl border border-gold/20">
+                          <p>Reserved by: <strong>{g.reservedBy}</strong></p>
+                          {g.reservedPhone && <p className="text-[11px] text-charcoal/70">Phone: {g.reservedPhone}</p>}
+                          {g.reservedEmail && <p className="text-[11px] text-charcoal/70">Email: {g.reservedEmail}</p>}
+                          {g.notes && <p className="text-[11px] italic text-gold mt-0.5">&ldquo;{g.notes}&rdquo;</p>}
+                        </div>
+                      )}
                     </div>
-                    <h4 className="font-serif font-bold text-forest-deep text-base">{g.name}</h4>
-                    <p className="text-xs text-charcoal/70 line-clamp-2 mt-1">{g.description}</p>
-                    {g.reservedBy && (
-                      <p className="text-xs font-semibold text-forest mt-2">
-                        Reserved by: {g.reservedBy} ({g.reservedPhone})
-                      </p>
-                    )}
+
+                    <div className="pt-3 border-t border-gold/20 mt-3 flex flex-wrap gap-2 justify-end">
+                      {g.status === "Reserved" && (
+                        <>
+                          <Button
+                            onClick={() => handleUpdateGiftStatus(g.id, "Received")}
+                            variant="gold"
+                            size="sm"
+                          >
+                            Mark as Received
+                          </Button>
+                          <Button
+                            onClick={() => handleUpdateGiftStatus(g.id, "Available")}
+                            variant="outline"
+                            size="sm"
+                          >
+                            Reset to Available
+                          </Button>
+                        </>
+                      )}
+                      {g.status === "Received" && (
+                        <Button
+                          onClick={() => handleUpdateGiftStatus(g.id, "Available")}
+                          variant="outline"
+                          size="sm"
+                        >
+                          Reset to Available
+                        </Button>
+                      )}
+                      {g.status === "Available" && (
+                        <span className="text-[11px] text-emerald-700 font-medium py-1">
+                          ✓ Available for reservation
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div className="pt-3 border-t border-gold/20 mt-3 flex justify-end">
-                    {g.status === "Reserved" && (
-                      <Button
-                        onClick={() => handleMarkGiftReceived(g.id)}
-                        variant="gold"
-                        size="sm"
-                      >
-                        Mark as Received
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         </div>

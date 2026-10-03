@@ -161,81 +161,154 @@
   ],
   "gifts": [
     {
-      "id": "gift-1",
-      "name": "Royal Dutch Oven Enamel Cookware Set",
+      "id": "gift-maxi-cooker",
+      "name": "MAXI 60*60 (3+1) Burner Gas Cooker Wood",
       "category": "Kitchen",
-      "description": "Heavy-gauge enameled cast iron cookware set in forest green finish with gold brass knobs.",
+      "description": "3 Gas Burners, 1 Electrical Burner: 1000W, Wood finish heat-resistant cabinet, auto-ignition, and gas oven. Model: MAXI606031WOOD.",
+      "image": "/images/gifts/maxi-gas-cooker.jpg",
       "quantity": 1,
       "status": "Available",
-      "estimatedValue": 120000
+      "estimatedValue": 245000
     },
     {
-      "id": "gift-2",
-      "name": "Philips Digital Air Fryer XXL",
-      "category": "Appliances",
-      "description": "Twin TurboStar rapid air technology for healthy home cooking and quick family meals.",
-      "quantity": 1,
-      "status": "Reserved",
-      "reservedBy": "Aunty Folashade",
-      "reservedEmail": "folashade@example.com",
-      "reservedPhone": "08055551234",
-      "reservedAt": "2026-09-15T09:00:00Z",
-      "estimatedValue": 165000
-    },
-    {
-      "id": "gift-3",
-      "name": "24-Piece Gold-Rimmed Porcelain Dinner Set",
-      "category": "Dining & Household",
-      "description": "Classic bone china dinnerware featuring fine gold trim and floral accents.",
+      "id": "gift-hisense-microwave",
+      "name": "Hisense 25L Microwave Oven with Grill",
+      "category": "Kitchen",
+      "description": "25 Litres digital microwave oven with grill function, defrost setting, mirror black finish, and multi-stage cooking.",
+      "image": "/images/gifts/hisense-microwave.jpg",
       "quantity": 1,
       "status": "Available",
-      "estimatedValue": 95000
+      "estimatedValue": 125000
     },
     {
-      "id": "gift-4",
-      "name": "LG Smart Inverter Microwave Oven 42L",
-      "category": "Appliances",
-      "description": "Even heating and defrosting with anti-bacterial easy-clean interior.",
+      "id": "gift-silicone-utensils",
+      "name": "Silicone Cooking Utensil: Kitchen Ware Sets",
+      "category": "Kitchen",
+      "description": "Premium food-grade heat-resistant silicone utensil set with ergonomic wooden handles and countertop storage bucket.",
+      "image": "/images/gifts/silicone-utensils.jpg",
       "quantity": 1,
       "status": "Available",
-      "estimatedValue": 180000
+      "estimatedValue": 35000
     },
     {
-      "id": "gift-5",
-      "name": "Breville Barista Touch Espresso Machine",
-      "category": "Appliances",
-      "description": "Automated touchscreen bean-to-cup coffee maker for our morning routines.",
+      "id": "gift-dish-rack",
+      "name": "Wall-Mounted Kitchen Dish Rack Organizer",
+      "category": "Kitchen",
+      "description": "Heavy-duty stainless steel wall-mounted kitchen dish drainer rack and space-saving organizer with utensil & cutlery holders.",
+      "image": "/images/gifts/dish-rack.jpg",
       "quantity": 1,
       "status": "Available",
-      "estimatedValue": 350000
+      "estimatedValue": 48000
     },
     {
-      "id": "gift-6",
-      "name": "Egyptian Cotton Luxury 1000TC Bedding Set",
-      "category": "Bedroom & Living",
-      "description": "Ultra-soft breathable king-size bed linen set in warm cream with matching pillowcases.",
+      "id": "gift-masterchef-cookware",
+      "name": "Master Chef Non-Stick Cookware Set & Frying Pan",
+      "category": "Kitchen",
+      "description": "Master Chef heavy-gauge non-stick aluminum cooking pot set and frying pan with tempered glass lids and heat-insulated handles.",
+      "image": "/images/gifts/cookware-set.jpg",
       "quantity": 1,
-      "status": "Received",
-      "reservedBy": "The Groomsmen Collective",
-      "estimatedValue": 110000
+      "status": "Available",
+      "estimatedValue": 75000
     },
     {
-      "id": "gift-7",
-      "name": "Dyson V11 Cordless Vacuum Cleaner",
-      "category": "Dining & Household",
-      "description": "Intelligent suction optimization and deep whole-home filtration.",
+      "id": "gift-pressure-cooker",
+      "name": "Master Chef Pressure Cooker Pot - 12L",
+      "category": "Kitchen",
+      "description": "Master Chef 12-Litre heavy-duty aluminum pressure cooker with dual-safety valve system for fast, energy-efficient family cooking.",
+      "image": "/images/gifts/pressure-cooker.jpg",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 62000
+    },
+    {
+      "id": "gift-hisense-washing-machine",
+      "name": "Hisense 6KG Front Loader Automatic Washing Machine",
+      "category": "Home Appliances",
+      "description": "6KG capacity front load automatic washing machine with smart wash cycles, quick wash, 1200 RPM spin and energy-saving inverter motor.",
+      "image": "/images/gifts/hisense-washing-machine.jpg",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 310000
+    },
+    {
+      "id": "gift-hisense-chest-freezer",
+      "name": "Hisense 217 Litres Chest Freezer",
+      "category": "Home Appliances",
+      "description": "217L deep chest freezer with fast-freeze technology, tropicalized heavy-duty compressor, and lockable safety lid.",
+      "image": "/images/gifts/hisense-chest-freezer.jpg",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 295000
+    },
+    {
+      "id": "gift-hisense-refrigerator",
+      "name": "Hisense 124L Top Mount Double Door Refrigerator",
+      "category": "Home Appliances",
+      "description": "124-Litre double door top-mount refrigerator with separate freezer compartment, vegetable crisper and low-noise operation.",
+      "image": "/images/gifts/hisense-refrigerator.jpg",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 240000
+    },
+    {
+      "id": "gift-smart-tv",
+      "name": "Smart UHD 4K TV 55-Inch",
+      "category": "Home Appliances",
+      "description": "55-Inch 4K Ultra HD Smart TV with HDR, bezel-less cinematic display, Dolby Audio, Bluetooth, and preloaded streaming apps.",
+      "image": "/images/gifts/smart-tv.jpg",
       "quantity": 1,
       "status": "Available",
       "estimatedValue": 420000
     },
     {
-      "id": "gift-8",
-      "name": "Panasonic Super Heavy Blender & Grinder",
-      "category": "Kitchen",
-      "description": "High-power stainless steel blades ideal for blending beans, pepper, and smoothies.",
+      "id": "gift-hisense-soundbar",
+      "name": "Hisense 2.1 Ch Soundbar with Wireless Subwoofer",
+      "category": "Home Appliances",
+      "description": "2.1 Channel home theater soundbar system featuring wireless subwoofer, Bluetooth 5.0 streaming, and HDMI ARC support.",
+      "image": "/images/gifts/hisense-soundbar.jpg",
       "quantity": 1,
       "status": "Available",
-      "estimatedValue": 75000
+      "estimatedValue": 145000
+    },
+    {
+      "id": "gift-binatone-fan",
+      "name": "Binatone 18\" Rechargeable Fan",
+      "category": "Home Appliances",
+      "description": "18-inch multi-speed standing rechargeable fan with remote control, LED night light, and long-lasting backup battery.",
+      "image": "/images/gifts/binatone-fan.jpg",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 85000
+    },
+    {
+      "id": "gift-midea-ac",
+      "name": "Midea 1.5HP Wall Inverter Air Conditioner",
+      "category": "Home Appliances",
+      "description": "1.5 Horsepower high-efficiency inverter split unit AC with rapid cooling, whisper-quiet operation and eco-friendly refrigerant.",
+      "image": "/images/gifts/midea-air-conditioner.jpg",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 380000
+    },
+    {
+      "id": "gift-itel-inverter",
+      "name": "Itel 4kW 24V 1-Phase Inverter + MPPT 6kW",
+      "category": "Home Appliances",
+      "description": "4kW 24V single-phase pure sine wave hybrid solar inverter with integrated 6kW MPPT charge controller for seamless home power.",
+      "image": "/images/gifts/itel-solar-inverter.jpg",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 680000
+    },
+    {
+      "id": "gift-cola-solar-battery",
+      "name": "Cola Solar Lithium Battery 280AH",
+      "category": "Home Appliances",
+      "description": "280Ah high-capacity LiFePO4 deep-cycle solar lithium battery with built-in Smart BMS for long lifespan and reliable home energy storage.",
+      "image": "/images/gifts/cola-solar-battery.jpg",
+      "quantity": 1,
+      "status": "Available",
+      "estimatedValue": 950000
     }
   ],
   "monetaryGifts": [

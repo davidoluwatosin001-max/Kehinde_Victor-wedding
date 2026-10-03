@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Gift, Copy, Check, Heart, Lock, Sparkles, Send, Plane, Home, Utensils } from "lucide-react";
+import { Gift, Copy, Check, Heart, Lock, Sparkles, Send, Home, Utensils } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { GiftItem, SiteSettings } from "@/types";
@@ -192,11 +192,16 @@ export const GiftSection: React.FC = () => {
     }
   };
 
-  const categories = ["All", "Kitchen", "Appliances", "Dining & Household", "Bedroom & Living"];
+  const categories = ["All", "Kitchen", "Home Appliances"];
 
   const filteredGifts = selectedCategory === "All"
     ? gifts
-    : gifts.filter((g) => g.category.includes(selectedCategory));
+    : gifts.filter((g) => {
+        if (selectedCategory === "Home Appliances") {
+          return g.category === "Home Appliances" || g.category === "Appliances";
+        }
+        return g.category === selectedCategory;
+      });
 
   return (
     <section id="gifts" className="py-16 sm:py-24 px-4 sm:px-6 bg-[#FDFBF7] relative">
@@ -328,27 +333,43 @@ export const GiftSection: React.FC = () => {
           </div>
 
           {/* Registry Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredGifts.map((gift) => (
               <div
                 key={gift.id}
-                className="card-luxury rounded-2xl p-5 border border-gold/40 flex flex-col justify-between hover:shadow-xl transition-all duration-300 relative group"
+                className="card-luxury rounded-3xl p-5 border border-gold/40 flex flex-col justify-between hover:shadow-2xl transition-all duration-300 relative group overflow-hidden bg-white/90"
               >
                 <div>
-                  <div className="flex justify-between items-start gap-2 mb-3">
-                    <span className="text-[10px] uppercase tracking-wider font-semibold text-gold bg-gold/10 px-2 py-0.5 rounded-md">
-                      {gift.category}
-                    </span>
+                  {/* Gift Image Container */}
+                  <div className="relative w-full h-48 rounded-2xl overflow-hidden mb-4 bg-gradient-to-br from-gold/5 to-forest/5 border border-gold/25 flex items-center justify-center">
+                    {gift.image ? (
+                      <img
+                        src={gift.image}
+                        alt={gift.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full bg-gold/20 flex items-center justify-center text-forest">
+                        <Gift className="w-7 h-7 text-forest" />
+                      </div>
+                    )}
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                      className={`absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm backdrop-blur-md ${
                         gift.status === "Available"
-                          ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                          ? "bg-emerald-600/90 text-white border border-emerald-400"
                           : gift.status === "Reserved"
-                          ? "bg-amber-100 text-amber-800 border border-amber-300"
-                          : "bg-blue-100 text-blue-800 border border-blue-300"
+                          ? "bg-amber-600/90 text-white border border-amber-400"
+                          : "bg-blue-600/90 text-white border border-blue-400"
                       }`}
                     >
                       {gift.status}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-start gap-2 mb-2">
+                    <span className="text-[10px] uppercase tracking-wider font-semibold text-gold bg-gold/15 px-2.5 py-0.5 rounded-full border border-gold/30">
+                      {gift.category}
                     </span>
                   </div>
 
@@ -385,23 +406,7 @@ export const GiftSection: React.FC = () => {
           </div>
         </div>
 
-        {/* HONEYMOON & EXPERIENCE FUND */}
-        <div className="card-luxury rounded-3xl p-6 sm:p-8 border border-gold/50 text-center">
-          <div className="max-w-xl mx-auto">
-            <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center mx-auto mb-3 text-forest">
-              <Plane className="w-6 h-6 text-forest" />
-            </div>
-            <h3 className="font-serif text-2xl text-forest-deep font-semibold">
-              Our Honeymoon &amp; Experiences
-            </h3>
-            <p className="text-xs sm:text-sm text-charcoal/70 mt-2 mb-4 leading-relaxed">
-              Prefer contributing to lifelong memories? You can earmark any monetary gift for our romantic dinners, honeymoon retreat, or special adventures by mentioning &ldquo;Honeymoon&rdquo; in your transfer reference.
-            </p>
-            <Button onClick={() => setIsSentGiftModalOpen(true)} variant="outline" size="sm">
-              Contribute to Honeymoon Fund
-            </Button>
-          </div>
-        </div>
+
       </div>
 
       {/* MODAL 1: "I've Sent a Gift" Acknowledgement Modal */}
@@ -544,6 +549,33 @@ export const GiftSection: React.FC = () => {
           </div>
         ) : (
           <form onSubmit={handleReserveSubmit} className="space-y-4">
+            {selectedGift && (
+              <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/90 border border-gold/30 shadow-sm">
+                {selectedGift.image ? (
+                  <img
+                    src={selectedGift.image}
+                    alt={selectedGift.name}
+                    className="w-16 h-16 rounded-xl object-cover border border-gold/20 shrink-0"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-xl bg-gold/20 flex items-center justify-center shrink-0 text-forest">
+                    <Gift className="w-8 h-8 text-forest" />
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <span className="text-[10px] uppercase font-bold text-gold tracking-wider block mb-0.5">
+                    {selectedGift.category}
+                  </span>
+                  <h4 className="font-serif font-bold text-forest-deep text-sm sm:text-base leading-snug line-clamp-1">
+                    {selectedGift.name}
+                  </h4>
+                  <p className="text-[11px] text-charcoal/70 line-clamp-1 mt-0.5">
+                    {selectedGift.description}
+                  </p>
+                </div>
+              </div>
+            )}
+
             <p className="text-xs text-charcoal/75 bg-gold/10 p-3 rounded-xl border border-gold/30">
               Reserving this item prevents duplicate purchases by other guests. Please provide your contact details so Kehinde &amp; Victor can coordinate delivery with you.
             </p>

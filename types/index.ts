@@ -72,7 +72,7 @@ export type GiftStatus = 'Available' | 'Reserved' | 'Received';
 export interface GiftItem {
   id: string;
   name: string;
-  category: 'Kitchen' | 'Appliances' | 'Furniture' | 'Electronics & Gadgets' | 'Bedroom & Living' | 'Dining & Household';
+  category: 'Kitchen' | 'Appliances' | 'Home Appliances' | 'Furniture' | 'Electronics & Gadgets' | 'Bedroom & Living' | 'Dining & Household';
   description: string;
   image?: string;
   estimatedValue?: number; // admin view
