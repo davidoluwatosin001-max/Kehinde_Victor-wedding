@@ -204,7 +204,7 @@ export const GiftSection: React.FC = () => {
       });
 
   return (
-    <section id="gifts" className="py-16 sm:py-24 px-4 sm:px-6 bg-[#FDFBF7] relative">
+    <section id="gifts" className="py-16 sm:py-24 px-4 sm:px-6 bg-[#FDFBF7]/80 backdrop-blur-[1px] relative">
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-14 max-w-2xl mx-auto">

@@ -45,7 +45,7 @@ export const AccommodationSection: React.FC = () => {
   };
 
   return (
-    <section id="accommodation" className="py-16 sm:py-24 px-4 sm:px-6 bg-ivory relative">
+    <section id="accommodation" className="py-16 sm:py-24 px-4 sm:px-6 bg-ivory/80 backdrop-blur-[1px] relative">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <p className="font-sans text-xs sm:text-sm tracking-[0.25em] text-gold uppercase font-semibold">

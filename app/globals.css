@@ -36,9 +36,10 @@ body {
 
 /* Luxury Card & Foil Details */
 .card-luxury {
-  background: linear-gradient(175deg, #FAF4E6 0%, #F5EEDB 60%, #F1E6CC 100%);
+  background: linear-gradient(175deg, rgba(250, 244, 230, 0.94) 0%, rgba(245, 238, 219, 0.94) 60%, rgba(241, 230, 204, 0.94) 100%);
   border: 1px solid rgba(173, 128, 44, 0.4);
   box-shadow: 0 20px 45px -10px rgba(15, 33, 22, 0.12), 0 4px 12px rgba(173, 128, 44, 0.08);
+  backdrop-filter: blur(8px);
 }
 
 .gold-foil-border {

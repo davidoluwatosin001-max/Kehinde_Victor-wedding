@@ -14,7 +14,7 @@ interface HeroSectionProps {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onRSVPClick, onExploreClick }) => {
   return (
-    <section className="relative min-h-[92vh] flex flex-col items-center justify-center pt-24 pb-16 px-4 sm:px-6 overflow-hidden bg-gradient-to-b from-[#FAF4E6] via-[#F8F3E8] to-[#F1E6CC]">
+    <section className="relative min-h-[92vh] flex flex-col items-center justify-center pt-24 pb-16 px-4 sm:px-6 overflow-hidden bg-gradient-to-b from-[#FAF4E6]/75 via-[#F8F3E8]/65 to-[#F1E6CC]/75 backdrop-blur-[1px]">
       {/* Decorative Gold & Forest Background Ornaments */}
       <div className="absolute inset-0 pointer-events-none opacity-40">
         <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-gold/15 blur-3xl" />

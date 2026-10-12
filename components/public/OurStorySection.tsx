@@ -18,7 +18,7 @@ export const OurStorySection: React.FC<OurStorySectionProps> = ({
   ],
 }) => {
   return (
-    <section id="story" className="py-16 sm:py-24 px-4 sm:px-6 bg-ivory-light relative overflow-hidden">
+    <section id="story" className="py-16 sm:py-24 px-4 sm:px-6 bg-[#FDFBF7]/80 backdrop-blur-[1px] relative overflow-hidden">
       <div className="max-w-5xl mx-auto">
         {/* Section Heading */}
         <div className="text-center mb-14">
@@ -53,14 +53,17 @@ export const OurStorySection: React.FC<OurStorySectionProps> = ({
                 />
               </div>
 
-              {/* Inset Photo of Victor */}
-              <div className="absolute -bottom-6 -right-4 sm:-bottom-8 sm:-right-6 w-32 h-32 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border-2 border-gold shadow-2xl bg-forest">
+              {/* Inset Photo of Kehinde & Victor */}
+              <div className="absolute -bottom-6 -right-4 sm:-bottom-8 sm:-right-6 w-36 sm:w-44 aspect-[4/5] rounded-2xl overflow-hidden border-2 border-gold shadow-2xl bg-forest group">
                 <Image
-                  src="/images/victor.png"
-                  alt="Victor Oluwatosin"
+                  src="/images/couple.jpg"
+                  alt="Kehinde Elizabeth & Victor Oluwatosin"
                   fill
-                  className="object-cover object-top"
+                  className="object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-500"
                 />
+                <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-forest-deep/90 border border-gold/60 text-[9px] sm:text-[10px] font-serif italic text-ivory tracking-wider whitespace-nowrap shadow-md pointer-events-none">
+                  Kehinde &amp; Victor
+                </div>
               </div>
             </div>
           </div>

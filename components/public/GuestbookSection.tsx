@@ -56,7 +56,7 @@ export const GuestbookSection: React.FC = () => {
   };
 
   return (
-    <section id="guestbook" className="py-16 sm:py-24 px-4 sm:px-6 bg-[#FAF4E6] relative">
+    <section id="guestbook" className="py-16 sm:py-24 px-4 sm:px-6 bg-[#FAF4E6]/80 backdrop-blur-[1px] relative">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <p className="font-sans text-xs sm:text-sm tracking-[0.25em] text-gold uppercase font-semibold">

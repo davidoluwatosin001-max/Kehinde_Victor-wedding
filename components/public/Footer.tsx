@@ -5,7 +5,7 @@ import { WaxSeal } from "@/components/invitation/WaxSeal";
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-gradient-to-b from-[#FAF4E6] to-[#F1E6CC] border-t border-gold/40 py-14 px-4 sm:px-6 relative text-center">
+    <footer className="bg-gradient-to-b from-[#FAF4E6]/85 to-[#F1E6CC]/85 backdrop-blur-[1px] border-t border-gold/40 py-14 px-4 sm:px-6 relative text-center">
       <div className="max-w-4xl mx-auto flex flex-col items-center">
         {/* Wax Seal */}
         <div className="mb-4">
