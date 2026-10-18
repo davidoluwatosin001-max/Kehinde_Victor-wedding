@@ -106,6 +106,7 @@ export interface CustomGiftProposal {
   senderPhone?: string;
   giftDescription: string;
   message?: string;
+  status: 'Under Review' | 'Accepted' | 'Received' | 'Fulfilled';
   createdAt: string;
 }
 
@@ -142,11 +143,15 @@ export interface AdminStats {
   pendingGuests: number;
   declinedGuests: number;
   totalAttendeesCount: number;
-  accommodationRequestsCount: number;
+  accommodationRequestsCount?: number;
   monetaryGiftsCount: number;
   monetaryGiftsTotal: number;
+  monetaryGiftsVerifiedTotal: number;
+  monetaryGiftsReportedTotal: number;
+  customGiftsCount: number;
   physicalGiftsTotal: number;
   physicalGiftsReserved: number;
   physicalGiftsReceived: number;
   messagesCount: number;
+  messagesApprovedCount: number;
 }

@@ -678,20 +678,6 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
                       ))}
                     </div>
                   )}
-
-                  {/* Accommodation Need Checkbox */}
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gold/10 border border-gold/30">
-                    <input
-                      type="checkbox"
-                      id="accommodationCheck"
-                      checked={formData.accommodationNeeded}
-                      onChange={(e) => setFormData({ ...formData, accommodationNeeded: e.target.checked })}
-                      className="w-4 h-4 rounded text-forest focus:ring-forest border-gold/50"
-                    />
-                    <label htmlFor="accommodationCheck" className="text-xs text-forest-deep select-none cursor-pointer">
-                      I/We may require accommodation recommendations or reservation assistance in Mowe.
-                    </label>
-                  </div>
                 </>
               )}
 

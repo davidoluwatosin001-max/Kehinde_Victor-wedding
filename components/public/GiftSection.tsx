@@ -70,8 +70,10 @@ export const GiftSection: React.FC = () => {
   }, []);
 
   const handleCopyAccount = () => {
-    if (!settings) return;
-    const textToCopy = `Bank: ${settings.bankName}\nAccount Name: ${settings.accountName}\nAccount Number: ${settings.accountNumber}`;
+    const bankName = settings?.bankName || "Guaranty Trust Bank (GTBank)";
+    const accountName = settings?.accountName || "Victor Odudu";
+    const accountNumber = settings?.accountNumber || "0431652266";
+    const textToCopy = `Bank: ${bankName}\nAccount Name: ${accountName}\nAccount Number: ${accountNumber}`;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
@@ -242,7 +244,7 @@ export const GiftSection: React.FC = () => {
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <span className="text-[10px] uppercase tracking-wider text-charcoal/60 font-semibold block">Bank</span>
-                  <span className="font-serif text-lg text-forest-deep font-bold">{settings?.bankName || "United Bank for Africa (UBA)"}</span>
+                  <span className="font-serif text-lg text-forest-deep font-bold">{settings?.bankName || "Guaranty Trust Bank (GTBank)"}</span>
                 </div>
                 <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center border border-gold/40">
                   <Home className="w-4 h-4 text-forest" />
@@ -260,7 +262,7 @@ export const GiftSection: React.FC = () => {
                 <div>
                   <span className="text-[10px] uppercase tracking-wider text-gold font-semibold block">Account Number</span>
                   <span className="font-mono text-xl sm:text-2xl tracking-widest text-forest-deep font-bold">
-                    {settings?.accountNumber || "2061621174"}
+                    {settings?.accountNumber || "0431652266"}
                   </span>
                 </div>
                 <Button

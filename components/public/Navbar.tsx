@@ -22,7 +22,6 @@ export const Navbar: React.FC = () => {
     { name: "Schedule", href: "#schedule" },
     { name: "RSVP", href: "#rsvp" },
     { name: "Gift Registry", href: "#gifts" },
-    { name: "Stay & Travel", href: "#accommodation" },
     { name: "Wishes", href: "#guestbook" },
     { name: "FAQs", href: "#faqs" },
   ];

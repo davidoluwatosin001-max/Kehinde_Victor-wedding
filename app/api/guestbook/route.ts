@@ -25,3 +25,37 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message || "Failed to submit message" }, { status: 500 });
   }
 }
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id, approved } = body;
+    if (!id || typeof approved !== "boolean") {
+      return NextResponse.json({ error: "Missing message id or valid approved boolean" }, { status: 400 });
+    }
+
+    const updated = await store.updateGuestbookApproval(id, approved);
+    if (!updated) {
+      return NextResponse.json({ error: "Guestbook message not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, message: updated });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || "Failed to update status" }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return NextResponse.json({ error: "ID required" }, { status: 400 });
+    }
+
+    const success = await store.deleteGuestbookMessage(id);
+    return NextResponse.json({ success });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || "Failed to delete" }, { status: 500 });
+  }
+}

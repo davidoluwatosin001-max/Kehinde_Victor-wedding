@@ -32,9 +32,9 @@ const initialSettings: SiteSettings = {
   weddingDate: "2026-11-19T10:00:00+01:00",
   tagline: "Two Hearts. One Journey Forever.",
   hashtag: "Ayobamidele '26",
-  bankName: "United Bank for Africa (UBA)",
+  bankName: "Guaranty Trust Bank (GTBank)",
   accountName: "Victor Odudu",
-  accountNumber: "2061621174",
+  accountNumber: "0431652266",
   paymentInstructions: "Please include your name in the payment reference or narration so we can identify and acknowledge your loving blessing.",
   storyTitle: "Our Love Story: How Two Hearts Found Their Forever",
   storyContent: [
@@ -88,82 +88,11 @@ export const initialEvents: WeddingEvent[] = [
   },
 ];
 
-const initialGuests: Guest[] = [
-  {
-    id: "guest-1",
-    code: "KV-VIP01",
-    name: "Dr. & Mrs. Adeleke",
-    email: "adeleke.family@example.com",
-    phone: "08031234567",
-    maxGuests: 2,
-    allowedPlusOne: true,
-    accommodationEligible: true,
-    isVip: true,
-    notes: "Special family table",
-    createdAt: "2026-09-01T10:00:00Z",
-  },
-  {
-    id: "guest-2",
-    code: "KV-AB7K2",
-    name: "Uncle Femi & Family",
-    email: "femi.odudu@example.com",
-    phone: "08098765432",
-    maxGuests: 2,
-    allowedPlusOne: false,
-    accommodationEligible: true,
-    isVip: false,
-    notes: "Requires ground floor seating",
-    createdAt: "2026-09-02T11:00:00Z",
-  },
-  {
-    id: "guest-3",
-    code: "KV-FRIEND9",
-    name: "Blessing Emmanuel",
-    email: "blessing.e@example.com",
-    phone: "08123456789",
-    maxGuests: 2,
-    allowedPlusOne: true,
-    accommodationEligible: false,
-    isVip: false,
-    createdAt: "2026-09-03T12:00:00Z",
-  },
-];
+const initialGuests: Guest[] = [];
 
-const initialRSVPs: RSVP[] = [
-  {
-    id: "rsvp-1",
-    invitationCode: "KV-VIP01",
-    guestName: "Dr. & Mrs. Adeleke",
-    email: "adeleke.family@example.com",
-    phone: "08031234567",
-    status: "Confirmed",
-    guestCount: 2,
-    attendingEvents: "All Event (Engagement (Wed 18 Nov, 4pm) & White Wedding (Thu 19 Nov, 10am) / Reception)",
-    attendees: [
-      { name: "Dr. Adeleke", dietaryPreference: "No seafood" },
-      { name: "Mrs. Adeleke" },
-    ],
-    accommodationNeeded: true,
-    message: "We rejoice with the Balogun and Odudu families! Looking forward to an unforgettable celebration.",
-    submittedAt: "2026-09-10T14:30:00Z",
-  },
-];
+const initialRSVPs: RSVP[] = [];
 
-const initialAccommodation: AccommodationRequest[] = [
-  {
-    id: "acc-1",
-    guestName: "Dr. & Mrs. Adeleke",
-    email: "adeleke.family@example.com",
-    phone: "08031234567",
-    numberOfPeople: 2,
-    checkInDate: "2026-11-18",
-    checkOutDate: "2026-11-20",
-    roomRequirement: "1 Double Room / King Suite",
-    specialRequirements: "Quiet floor near venue",
-    status: "Approved",
-    createdAt: "2026-09-10T14:35:00Z",
-  },
-];
+const initialAccommodation: AccommodationRequest[] = [];
 
 const initialGifts: GiftItem[] = [
   {
@@ -177,56 +106,6 @@ const initialGifts: GiftItem[] = [
     estimatedValue: 245000,
   },
   {
-    id: "gift-hisense-microwave",
-    name: "Hisense 25L Microwave Oven with Grill",
-    category: "Kitchen",
-    description: "25 Litres digital microwave oven with grill function, defrost setting, mirror black finish, and multi-stage cooking.",
-    image: "/images/gifts/hisense-microwave.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 125000,
-  },
-  {
-    id: "gift-silicone-utensils",
-    name: "Silicone Cooking Utensil: Kitchen Ware Sets",
-    category: "Kitchen",
-    description: "Premium food-grade heat-resistant silicone utensil set with ergonomic wooden handles and countertop storage bucket.",
-    image: "/images/gifts/silicone-utensils.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 35000,
-  },
-  {
-    id: "gift-dish-rack",
-    name: "Wall-Mounted Kitchen Dish Rack Organizer",
-    category: "Kitchen",
-    description: "Heavy-duty stainless steel wall-mounted kitchen dish drainer rack and space-saving organizer with utensil & cutlery holders.",
-    image: "/images/gifts/dish-rack.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 48000,
-  },
-  {
-    id: "gift-masterchef-cookware",
-    name: "Master Chef Non-Stick Cookware Set & Frying Pan",
-    category: "Kitchen",
-    description: "Master Chef heavy-gauge non-stick aluminum cooking pot set and frying pan with tempered glass lids and heat-insulated handles.",
-    image: "/images/gifts/cookware-set.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 75000,
-  },
-  {
-    id: "gift-pressure-cooker",
-    name: "Master Chef Pressure Cooker Pot - 12L",
-    category: "Kitchen",
-    description: "Master Chef 12-Litre heavy-duty aluminum pressure cooker with dual-safety valve system for fast, energy-efficient family cooking.",
-    image: "/images/gifts/pressure-cooker.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 62000,
-  },
-  {
     id: "gift-hisense-washing-machine",
     name: "Hisense 6KG Front Loader Automatic Washing Machine",
     category: "Home Appliances",
@@ -235,26 +114,6 @@ const initialGifts: GiftItem[] = [
     quantity: 1,
     status: "Available",
     estimatedValue: 310000,
-  },
-  {
-    id: "gift-hisense-chest-freezer",
-    name: "Hisense 217 Litres Chest Freezer",
-    category: "Home Appliances",
-    description: "217L deep chest freezer with fast-freeze technology, tropicalized heavy-duty compressor, and lockable safety lid.",
-    image: "/images/gifts/hisense-chest-freezer.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 295000,
-  },
-  {
-    id: "gift-hisense-refrigerator",
-    name: "Hisense 124L Top Mount Double Door Refrigerator",
-    category: "Home Appliances",
-    description: "124-Litre double door top-mount refrigerator with separate freezer compartment, vegetable crisper and low-noise operation.",
-    image: "/images/gifts/hisense-refrigerator.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 240000,
   },
   {
     id: "gift-smart-tv",
@@ -266,94 +125,13 @@ const initialGifts: GiftItem[] = [
     status: "Available",
     estimatedValue: 420000,
   },
-  {
-    id: "gift-hisense-soundbar",
-    name: "Hisense 2.1 Ch Soundbar with Wireless Subwoofer",
-    category: "Home Appliances",
-    description: "2.1 Channel home theater soundbar system featuring wireless subwoofer, Bluetooth 5.0 streaming, and HDMI ARC support.",
-    image: "/images/gifts/hisense-soundbar.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 145000,
-  },
-  {
-    id: "gift-binatone-fan",
-    name: "Binatone 18\" Rechargeable Fan",
-    category: "Home Appliances",
-    description: "18-inch multi-speed standing rechargeable fan with remote control, LED night light, and long-lasting backup battery.",
-    image: "/images/gifts/binatone-fan.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 85000,
-  },
-  {
-    id: "gift-midea-ac",
-    name: "Midea 1.5HP Wall Inverter Air Conditioner",
-    category: "Home Appliances",
-    description: "1.5 Horsepower high-efficiency inverter split unit AC with rapid cooling, whisper-quiet operation and eco-friendly refrigerant.",
-    image: "/images/gifts/midea-air-conditioner.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 380000,
-  },
-  {
-    id: "gift-itel-inverter",
-    name: "Itel 4kW 24V 1-Phase Inverter + MPPT 6kW",
-    category: "Home Appliances",
-    description: "4kW 24V single-phase pure sine wave hybrid solar inverter with integrated 6kW MPPT charge controller for seamless home power.",
-    image: "/images/gifts/itel-solar-inverter.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 680000,
-  },
-  {
-    id: "gift-cola-solar-battery",
-    name: "Cola Solar Lithium Battery 280AH",
-    category: "Home Appliances",
-    description: "280Ah high-capacity LiFePO4 deep-cycle solar lithium battery with built-in Smart BMS for long lifespan and reliable home energy storage.",
-    image: "/images/gifts/cola-solar-battery.jpg",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 950000,
-  },
 ];
 
-const initialMonetaryGifts: MonetaryGift[] = [
-  {
-    id: "mg-1",
-    senderName: "Pastor & Mrs. Benson",
-    senderEmail: "benson@example.com",
-    senderPhone: "08022223344",
-    amount: 150000,
-    paymentDate: "2026-09-12",
-    bankUsed: "GTBank",
-    reference: "REF-99210",
-    message: "May the Lord establish your home in divine peace and abundance!",
-    status: "Verified",
-    createdAt: "2026-09-12T16:00:00Z",
-  },
-];
+const initialMonetaryGifts: MonetaryGift[] = [];
 
 const initialCustomGifts: CustomGiftProposal[] = [];
 
-const initialGuestbook: GuestbookMessage[] = [
-  {
-    id: "msg-1",
-    author: "Tunde & Seyi",
-    relationship: "Friends of the Groom",
-    message: "Congratulations Victor & Kehinde! Watching your journey blossom has been a true joy. Your home is blessed!",
-    approved: true,
-    createdAt: "2026-09-14T11:20:00Z",
-  },
-  {
-    id: "msg-2",
-    author: "Sister Grace Balogun",
-    relationship: "Bride's Family",
-    message: "My sweet sister Kehinde, you are marrying a wonderful gentleman. God's grace will preserve your union forever!",
-    approved: true,
-    createdAt: "2026-09-16T18:45:00Z",
-  },
-];
+const initialGuestbook: GuestbookMessage[] = [];
 
 function getInitialDatabase(): WeddingDatabase {
   return {
@@ -762,21 +540,63 @@ export const store = {
     saveDatabase(db);
     return gift;
   },
+  updateMonetaryGiftStatus: async (id: string, status: "Reported" | "Verified"): Promise<MonetaryGift | null> => {
+    const db = loadDatabase();
+    const gift = db.monetaryGifts.find((g) => g.id === id);
+    if (!gift) return null;
+    gift.status = status;
+    saveDatabase(db);
+    return gift;
+  },
+  deleteMonetaryGift: async (id: string): Promise<boolean> => {
+    const db = loadDatabase();
+    const initialLen = db.monetaryGifts.length;
+    db.monetaryGifts = db.monetaryGifts.filter((g) => g.id !== id);
+    if (db.monetaryGifts.length < initialLen) {
+      saveDatabase(db);
+      return true;
+    }
+    return false;
+  },
 
   // Custom Gifts
   getCustomGiftProposals: async (): Promise<CustomGiftProposal[]> => {
     return loadDatabase().customGifts;
   },
-  submitCustomGiftProposal: async (data: Omit<CustomGiftProposal, "id" | "createdAt">): Promise<CustomGiftProposal> => {
+  submitCustomGiftProposal: async (
+    data: Omit<CustomGiftProposal, "id" | "status" | "createdAt"> & { status?: CustomGiftProposal["status"] }
+  ): Promise<CustomGiftProposal> => {
     const db = loadDatabase();
     const proposal: CustomGiftProposal = {
       ...data,
       id: `cg-${Date.now()}`,
+      status: data.status || "Under Review",
       createdAt: new Date().toISOString(),
     };
     db.customGifts.unshift(proposal);
     saveDatabase(db);
     return proposal;
+  },
+  updateCustomGiftStatus: async (
+    id: string,
+    status: CustomGiftProposal["status"]
+  ): Promise<CustomGiftProposal | null> => {
+    const db = loadDatabase();
+    const item = db.customGifts.find((c) => c.id === id);
+    if (!item) return null;
+    item.status = status;
+    saveDatabase(db);
+    return item;
+  },
+  deleteCustomGift: async (id: string): Promise<boolean> => {
+    const db = loadDatabase();
+    const initialLen = db.customGifts.length;
+    db.customGifts = db.customGifts.filter((c) => c.id !== id);
+    if (db.customGifts.length < initialLen) {
+      saveDatabase(db);
+      return true;
+    }
+    return false;
   },
 
   // Guestbook
@@ -795,11 +615,29 @@ export const store = {
     saveDatabase(db);
     return msg;
   },
+  updateGuestbookApproval: async (id: string, approved: boolean): Promise<GuestbookMessage | null> => {
+    const db = loadDatabase();
+    const msg = db.guestbook.find((m) => m.id === id);
+    if (!msg) return null;
+    msg.approved = approved;
+    saveDatabase(db);
+    return msg;
+  },
+  deleteGuestbookMessage: async (id: string): Promise<boolean> => {
+    const db = loadDatabase();
+    const initialLen = db.guestbook.length;
+    db.guestbook = db.guestbook.filter((m) => m.id !== id);
+    if (db.guestbook.length < initialLen) {
+      saveDatabase(db);
+      return true;
+    }
+    return false;
+  },
 
   // Admin Stats
   getStats: async (): Promise<AdminStats> => {
     const db = loadDatabase();
-    const totalInvited = db.guests.reduce((acc, g) => acc + g.maxGuests, 0);
+    const totalInvited = db.guests.reduce((acc, g) => acc + (g.maxGuests || 1), 0);
     const confirmedGuests = db.rsvps.filter((r) => r.status === "Confirmed").length;
     const pendingGuests = db.rsvps.filter((r) => r.status === "Pending").length;
     const declinedGuests = db.rsvps.filter((r) => r.status === "Declined").length;
@@ -807,7 +645,11 @@ export const store = {
       .filter((r) => r.status === "Confirmed")
       .reduce((sum, r) => sum + (r.guestCount || 1), 0);
 
-    const monetaryGiftsTotal = db.monetaryGifts.reduce((sum, g) => sum + g.amount, 0);
+    const monetaryGiftsVerifiedTotal = db.monetaryGifts
+      .filter((g) => g.status === "Verified")
+      .reduce((sum, g) => sum + (g.amount || 0), 0);
+    const monetaryGiftsReportedTotal = db.monetaryGifts
+      .reduce((sum, g) => sum + (g.amount || 0), 0);
 
     return {
       totalInvited,
@@ -817,11 +659,15 @@ export const store = {
       totalAttendeesCount,
       accommodationRequestsCount: db.accommodation.length,
       monetaryGiftsCount: db.monetaryGifts.length,
-      monetaryGiftsTotal,
+      monetaryGiftsTotal: monetaryGiftsVerifiedTotal,
+      monetaryGiftsVerifiedTotal,
+      monetaryGiftsReportedTotal,
+      customGiftsCount: db.customGifts.length,
       physicalGiftsTotal: db.gifts.length,
       physicalGiftsReserved: db.gifts.filter((g) => g.status === "Reserved").length,
       physicalGiftsReceived: db.gifts.filter((g) => g.status === "Received").length,
       messagesCount: db.guestbook.length,
+      messagesApprovedCount: db.guestbook.filter((m) => m.approved).length,
     };
   },
 };

@@ -20,7 +20,7 @@ export async function GET() {
       "RSVP Status",
       "Events Attending",
       "Attendees Count",
-      "Accommodation Needed",
+      "Companions",
       "Dietary Requirements",
       "Guest Message",
       "RSVP Date",
@@ -28,6 +28,7 @@ export async function GET() {
 
     const rows = guests.map((g) => {
       const match = rsvps.find((r) => r.invitationCode.toUpperCase() === g.code.toUpperCase());
+      const companions = match?.attendees ? match.attendees.map((a) => `${a.name || "Guest"}${a.dietaryPreference ? ` (${a.dietaryPreference})` : ""}`).join("; ") : "";
       return [
         `"${g.id}"`,
         `"${g.code}"`,
@@ -41,7 +42,7 @@ export async function GET() {
         `"${match ? match.status : "Pending"}"`,
         `"${(match?.attendingEvents || "All Events").replace(/"/g, '""')}"`,
         match ? match.guestCount : 0,
-        match?.accommodationNeeded ? "Yes" : "No",
+        `"${companions.replace(/"/g, '""')}"`,
         `"${(match?.dietaryRequirements || "").replace(/"/g, '""')}"`,
         `"${(match?.message || "").replace(/"/g, '""')}"`,
         `"${match?.submittedAt || ""}"`,

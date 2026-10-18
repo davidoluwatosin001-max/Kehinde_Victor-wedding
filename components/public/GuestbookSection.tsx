@@ -159,34 +159,39 @@ export const GuestbookSection: React.FC = () => {
             <h3 className="font-serif text-xl sm:text-2xl text-forest-deep font-semibold px-1">
               Warm Wishes from Loved Ones
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-1">
-              {messages.length === 0 ? (
-                <div className="col-span-2 p-8 text-center text-xs text-charcoal/60 bg-white/40 rounded-2xl border border-gold/20">
-                  Be the first to leave a warm message for Kehinde &amp; Victor!
-                </div>
-              ) : (
-                messages.map((m) => (
-                  <div
-                    key={m.id}
-                    className="card-luxury p-5 rounded-2xl border border-gold/30 flex flex-col justify-between hover:shadow-md transition-shadow"
-                  >
-                    <p className="font-serif italic text-charcoal/90 text-sm leading-relaxed mb-4">
-                      &ldquo;{m.message}&rdquo;
-                    </p>
-                    <div className="pt-3 border-t border-gold/20 flex items-center justify-between">
-                      <span className="font-sans font-semibold text-xs text-forest-deep">
-                        {m.author}
-                      </span>
-                      {m.relationship && (
-                        <span className="text-[10px] text-gold font-medium uppercase tracking-wider">
-                          {m.relationship}
-                        </span>
-                      )}
+            {(() => {
+              const approvedMessages = messages.filter((m) => m.approved !== false);
+              return (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-1">
+                  {approvedMessages.length === 0 ? (
+                    <div className="col-span-2 p-8 text-center text-xs text-charcoal/60 bg-white/40 rounded-2xl border border-gold/20">
+                      Be the first to leave a warm message for Kehinde &amp; Victor!
                     </div>
-                  </div>
-                ))
-              )}
-            </div>
+                  ) : (
+                    approvedMessages.map((m) => (
+                      <div
+                        key={m.id}
+                        className="card-luxury p-5 rounded-2xl border border-gold/30 flex flex-col justify-between hover:shadow-md transition-shadow"
+                      >
+                        <p className="font-serif italic text-charcoal/90 text-sm leading-relaxed mb-4">
+                          &ldquo;{m.message}&rdquo;
+                        </p>
+                        <div className="pt-3 border-t border-gold/20 flex items-center justify-between">
+                          <span className="font-sans font-semibold text-xs text-forest-deep">
+                            {m.author}
+                          </span>
+                          {m.relationship && (
+                            <span className="text-[10px] text-gold font-medium uppercase tracking-wider">
+                              {m.relationship}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              );
+            })()}
           </div>
         </div>
       </div>

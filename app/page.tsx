@@ -7,7 +7,6 @@ import { OurStorySection } from "@/components/public/OurStorySection";
 import { ScheduleSection } from "@/components/public/ScheduleSection";
 import { RSVPSection } from "@/components/public/RSVPSection";
 import { GiftSection } from "@/components/public/GiftSection";
-import { AccommodationSection } from "@/components/public/AccommodationSection";
 import { GuestbookSection } from "@/components/public/GuestbookSection";
 import { FAQSection } from "@/components/public/FAQSection";
 import { Footer } from "@/components/public/Footer";
@@ -42,9 +41,6 @@ export default function HomePage() {
 
         {/* Bless Our Beginning Gift Registry & Monetary Gifts */}
         <GiftSection />
-
-        {/* Guest Accommodation Flow */}
-        <AccommodationSection />
 
         {/* Wishes & Guestbook */}
         <GuestbookSection />
