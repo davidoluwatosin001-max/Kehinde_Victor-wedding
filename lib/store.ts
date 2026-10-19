@@ -279,8 +279,6 @@ function ensureDirectoryExists(dirPath: string) {
 }
 
 function loadDatabase(): WeddingDatabase {
-  if (memoryCache) return memoryCache;
-
   // 1. Check runtime /tmp cache first (for serverless environments)
   try {
     if (fs.existsSync(TMP_DATA_FILE)) {
@@ -296,6 +294,8 @@ function loadDatabase(): WeddingDatabase {
   } catch (err) {
     console.warn("[Store] Failed to read /tmp/wedding-store.json:", err);
   }
+
+  if (memoryCache) return memoryCache;
 
   // 2. Fall back to bundled project data file
   try {
