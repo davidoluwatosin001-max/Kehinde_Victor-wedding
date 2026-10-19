@@ -49,9 +49,10 @@ export const GiftSection: React.FC = () => {
 
   const fetchGiftData = async () => {
     try {
+      const timestamp = Date.now();
       const [resGifts, resSettings] = await Promise.all([
-        fetch("/api/gifts?availableOnly=true"),
-        fetch("/api/settings"),
+        fetch(`/api/gifts?availableOnly=true&t=${timestamp}`, { cache: "no-store" }),
+        fetch(`/api/settings?t=${timestamp}`, { cache: "no-store" }),
       ]);
       if (resGifts.ok) {
         const data = await resGifts.json();

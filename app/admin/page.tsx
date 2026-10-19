@@ -92,6 +92,11 @@ export default function AdminDashboardPage() {
   const refreshAllData = async (showToast: boolean = false) => {
     setIsRefreshing(true);
     try {
+      const timestamp = Date.now();
+      const fetchOpts: RequestInit = {
+        cache: "no-store",
+        headers: { "Cache-Control": "no-cache", "Pragma": "no-cache" },
+      };
       const [
         resStats,
         resGuests,
@@ -103,15 +108,15 @@ export default function AdminDashboardPage() {
         resGuestbook,
         resSet,
       ] = await Promise.all([
-        fetch("/api/admin/stats"),
-        fetch("/api/admin/guests"),
-        fetch("/api/rsvp"),
-        fetch("/api/gifts"),
-        fetch("/api/gifts/reservations"),
-        fetch("/api/gifts/monetary"),
-        fetch("/api/gifts/custom"),
-        fetch("/api/guestbook"),
-        fetch("/api/settings"),
+        fetch(`/api/admin/stats?t=${timestamp}`, fetchOpts),
+        fetch(`/api/admin/guests?t=${timestamp}`, fetchOpts),
+        fetch(`/api/rsvp?t=${timestamp}`, fetchOpts),
+        fetch(`/api/gifts?t=${timestamp}`, fetchOpts),
+        fetch(`/api/gifts/reservations?t=${timestamp}`, fetchOpts),
+        fetch(`/api/gifts/monetary?t=${timestamp}`, fetchOpts),
+        fetch(`/api/gifts/custom?t=${timestamp}`, fetchOpts),
+        fetch(`/api/guestbook?t=${timestamp}`, fetchOpts),
+        fetch(`/api/settings?t=${timestamp}`, fetchOpts),
       ]);
 
       if (resStats.ok) setStats((await resStats.json()).stats);

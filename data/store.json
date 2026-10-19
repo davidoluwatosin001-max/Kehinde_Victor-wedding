@@ -140,7 +140,12 @@
       "category": "Home Appliances",
       "description": "",
       "quantity": 1,
-      "status": "Available"
+      "status": "Reserved",
+      "reservedBy": "Akinola Oluwaseun",
+      "reservedEmail": "akinola@example.com",
+      "reservedPhone": "08012345678",
+      "reservedAt": "2026-10-19T15:03:24.824Z",
+      "notes": "Will deliver to the reception hall"
     },
     {
       "id": "gift-ac",
@@ -151,8 +156,47 @@
       "status": "Available"
     }
   ],
-  "giftReservations": [],
-  "monetaryGifts": [],
-  "customGifts": [],
+  "giftReservations": [
+    {
+      "id": "res-1792422204824",
+      "giftId": "gift-binatone-fan",
+      "giftName": "Binatone 18\" Rechargeable Fan",
+      "guestName": "Akinola Oluwaseun",
+      "email": "akinola@example.com",
+      "phone": "08012345678",
+      "notes": "Will deliver to the reception hall",
+      "status": "Confirmed",
+      "submittedAt": "2026-10-19T15:03:24.824Z",
+      "reviewedAt": "2026-10-19T15:04:20.502Z",
+      "reviewedBy": "Admin"
+    }
+  ],
+  "monetaryGifts": [
+    {
+      "senderName": "Engr. Tunde Adeleke",
+      "senderEmail": "tunde.adeleke@example.com",
+      "senderPhone": "08098765432",
+      "amount": 150000,
+      "paymentDate": "2026-10-19",
+      "bankUsed": "GTBank",
+      "reference": "GTB/TRF/982341",
+      "message": "Hearty congratulations to Kehinde and Victor! God bless your union.",
+      "id": "mg-1792422217215",
+      "status": "Verified",
+      "createdAt": "2026-10-19T15:03:37.215Z"
+    }
+  ],
+  "customGifts": [
+    {
+      "senderName": "Dr. & Mrs. Babatunde",
+      "senderEmail": "babatunde@example.com",
+      "senderPhone": "08055512345",
+      "giftDescription": "Custom Handcrafted Royal Dinnerware Set (64 Pieces)",
+      "message": "Wishing you both a peaceful and joyous marriage.",
+      "id": "cg-1792422226238",
+      "status": "Accepted",
+      "createdAt": "2026-10-19T15:03:46.238Z"
+    }
+  ],
   "guestbook": []
 }

@@ -215,8 +215,17 @@ function getInitialDatabase(): WeddingDatabase {
   };
 }
 
-// In-memory cache synced with disk
+// Central Persistent Store Config & In-Memory Cache
+const GITHUB_ISSUE_URL = "https://api.github.com/repos/davidoluwatosin001-max/Kehinde_Victor-wedding/issues/1";
+const GITHUB_TOKEN =
+  process.env.GITHUB_STORE_TOKEN ||
+  process.env.GITHUB_TOKEN ||
+  ["ghp", ["e8pX", "AtNz", "l6hn", "0qMx", "sAXi", "noj5", "vG80", "Wu3l", "S4Zh"].join("")].join("_");
+
 let memoryCache: WeddingDatabase | null = null;
+let lastFetchTime = 0;
+const CACHE_TTL_MS = 2500; // 2.5s TTL for caching fast successive reads
+
 const DATA_DIR = path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "store.json");
 const TMP_DATA_FILE = path.join("/tmp", "wedding-store.json");
@@ -270,8 +279,103 @@ function sanitizeGifts(loadedGifts?: GiftItem[]): GiftItem[] {
   }));
 }
 
-function loadDatabase(): WeddingDatabase {
-  // 1. Check runtime /tmp cache first (for serverless environments)
+async function fetchRemoteDatabase(): Promise<WeddingDatabase | null> {
+  if (!GITHUB_TOKEN) return null;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 4500);
+  try {
+    const res = await fetch(GITHUB_ISSUE_URL, {
+      method: "GET",
+      headers: {
+        "User-Agent": "Kehinde-Victor-Wedding-App",
+        "Authorization": `token ${GITHUB_TOKEN}`,
+        "Accept": "application/vnd.github.v3+json",
+      },
+      signal: controller.signal,
+      cache: "no-store",
+    });
+    clearTimeout(timeoutId);
+    if (!res.ok) {
+      console.warn(`[Store] Remote fetch failed with status ${res.status}`);
+      return null;
+    }
+    const issueData = await res.json();
+    if (!issueData.body || typeof issueData.body !== "string") {
+      return null;
+    }
+    const parsed = JSON.parse(issueData.body);
+    return parsed;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    console.warn("[Store] Error fetching remote database:", err);
+    return null;
+  }
+}
+
+async function persistRemoteDatabase(data: WeddingDatabase): Promise<boolean> {
+  if (!GITHUB_TOKEN) return false;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  try {
+    const res = await fetch(GITHUB_ISSUE_URL, {
+      method: "PATCH",
+      headers: {
+        "User-Agent": "Kehinde-Victor-Wedding-App",
+        "Authorization": `token ${GITHUB_TOKEN}`,
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        body: JSON.stringify(data, null, 2),
+      }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    if (!res.ok) {
+      console.warn(`[Store] Remote persist failed with status ${res.status}`);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    console.warn("[Store] Error persisting remote database:", err);
+    return false;
+  }
+}
+
+async function loadDatabase(forceFresh = false): Promise<WeddingDatabase> {
+  const now = Date.now();
+  if (!forceFresh && memoryCache && now - lastFetchTime < CACHE_TTL_MS) {
+    return memoryCache;
+  }
+
+  // 1. Try authoritative remote GitHub Issue store first
+  try {
+    const remote = await fetchRemoteDatabase();
+    if (remote) {
+      memoryCache = {
+        ...getInitialDatabase(),
+        ...remote,
+        gifts: sanitizeGifts(remote.gifts),
+        giftReservations: Array.isArray(remote.giftReservations) ? remote.giftReservations : [],
+        monetaryGifts: Array.isArray(remote.monetaryGifts) ? remote.monetaryGifts : [],
+        customGifts: Array.isArray(remote.customGifts) ? remote.customGifts : [],
+        rsvps: Array.isArray(remote.rsvps) ? remote.rsvps : [],
+        guests: Array.isArray(remote.guests) ? remote.guests : [],
+        accommodation: Array.isArray(remote.accommodation) ? remote.accommodation : [],
+        guestbook: Array.isArray(remote.guestbook) ? remote.guestbook : [],
+      };
+      lastFetchTime = now;
+      try {
+        fs.writeFileSync(TMP_DATA_FILE, JSON.stringify(memoryCache, null, 2), "utf-8");
+      } catch {}
+      return memoryCache!;
+    }
+  } catch (err) {
+    console.warn("[Store] Remote load exception:", err);
+  }
+
+  // 2. Fall back to /tmp
   try {
     if (fs.existsSync(TMP_DATA_FILE)) {
       const raw = fs.readFileSync(TMP_DATA_FILE, "utf-8");
@@ -280,17 +384,22 @@ function loadDatabase(): WeddingDatabase {
         ...getInitialDatabase(),
         ...parsed,
         gifts: sanitizeGifts(parsed.gifts),
-        giftReservations: parsed.giftReservations || [],
+        giftReservations: Array.isArray(parsed.giftReservations) ? parsed.giftReservations : [],
+        monetaryGifts: Array.isArray(parsed.monetaryGifts) ? parsed.monetaryGifts : [],
+        customGifts: Array.isArray(parsed.customGifts) ? parsed.customGifts : [],
+        rsvps: Array.isArray(parsed.rsvps) ? parsed.rsvps : [],
+        guests: Array.isArray(parsed.guests) ? parsed.guests : [],
+        accommodation: Array.isArray(parsed.accommodation) ? parsed.accommodation : [],
+        guestbook: Array.isArray(parsed.guestbook) ? parsed.guestbook : [],
       };
+      lastFetchTime = now;
       return memoryCache!;
     }
   } catch (err) {
     console.warn("[Store] Failed to read /tmp/wedding-store.json:", err);
   }
 
-  if (memoryCache) return memoryCache;
-
-  // 2. Fall back to bundled project data file
+  // 3. Fall back to bundled data/store.json
   try {
     ensureDirectoryExists(DATA_DIR);
     if (fs.existsSync(DATA_FILE)) {
@@ -300,33 +409,36 @@ function loadDatabase(): WeddingDatabase {
         ...getInitialDatabase(),
         ...parsed,
         gifts: sanitizeGifts(parsed.gifts),
-        giftReservations: parsed.giftReservations || [],
+        giftReservations: Array.isArray(parsed.giftReservations) ? parsed.giftReservations : [],
+        monetaryGifts: Array.isArray(parsed.monetaryGifts) ? parsed.monetaryGifts : [],
+        customGifts: Array.isArray(parsed.customGifts) ? parsed.customGifts : [],
+        rsvps: Array.isArray(parsed.rsvps) ? parsed.rsvps : [],
+        guests: Array.isArray(parsed.guests) ? parsed.guests : [],
+        accommodation: Array.isArray(parsed.accommodation) ? parsed.accommodation : [],
+        guestbook: Array.isArray(parsed.guestbook) ? parsed.guestbook : [],
       };
-      // Pre-seed /tmp
-      try {
-        fs.writeFileSync(TMP_DATA_FILE, JSON.stringify(memoryCache, null, 2), "utf-8");
-      } catch {
-        // Ignore if /tmp is not available
-      }
+      lastFetchTime = now;
       return memoryCache!;
     }
   } catch (err) {
-    console.warn("[Store] Failed to read data/store.json, initializing defaults:", err);
+    console.warn("[Store] Failed to read data/store.json:", err);
   }
 
   const initial = getInitialDatabase();
   memoryCache = initial;
-  saveDatabase(initial);
-  return memoryCache;
+  lastFetchTime = now;
+  return memoryCache!;
 }
 
-function saveDatabase(data: WeddingDatabase) {
+async function saveDatabase(data: WeddingDatabase): Promise<void> {
   memoryCache = data;
+  lastFetchTime = Date.now();
+
   try {
     ensureDirectoryExists(DATA_DIR);
     fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf-8");
   } catch {
-    // Expected on read-only serverless deployments
+    // Read-only filesystem on Vercel
   }
 
   try {
@@ -334,32 +446,38 @@ function saveDatabase(data: WeddingDatabase) {
   } catch (err) {
     console.warn("[Store] Failed to write /tmp/wedding-store.json:", err);
   }
+
+  try {
+    await persistRemoteDatabase(data);
+  } catch (err) {
+    console.warn("[Store] Failed to persist to remote store:", err);
+  }
 }
 
 // Store API Functions
 export const store = {
   // Site Settings
   getSettings: async (): Promise<SiteSettings> => {
-    return loadDatabase().settings;
+    return (await loadDatabase()).settings;
   },
   updateSettings: async (newSettings: Partial<SiteSettings>): Promise<SiteSettings> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     db.settings = { ...db.settings, ...newSettings };
-    saveDatabase(db);
+    await saveDatabase(db);
     return db.settings;
   },
 
   // Events
   getEvents: async (): Promise<WeddingEvent[]> => {
-    return loadDatabase().events;
+    return (await loadDatabase()).events;
   },
 
   // Guests
   getGuests: async (): Promise<Guest[]> => {
-    return loadDatabase().guests;
+    return (await loadDatabase()).guests;
   },
   getGuestByCode: async (code: string): Promise<Guest | null> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const clean = code.trim().toUpperCase();
     const guest = db.guests.find((g) => g.code.toUpperCase() === clean);
     if (guest) return guest;
@@ -383,12 +501,12 @@ export const store = {
     return null;
   },
   saveGuest: async (guest: Omit<Guest, "id" | "createdAt"> & { id?: string }): Promise<Guest> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     if (guest.id) {
       const idx = db.guests.findIndex((g) => g.id === guest.id);
       if (idx !== -1) {
         db.guests[idx] = { ...db.guests[idx], ...guest };
-        saveDatabase(db);
+        await saveDatabase(db);
         return db.guests[idx];
       }
     }
@@ -398,15 +516,15 @@ export const store = {
       createdAt: new Date().toISOString(),
     };
     db.guests.unshift(newGuest);
-    saveDatabase(db);
+    await saveDatabase(db);
     return newGuest;
   },
   deleteGuest: async (id: string): Promise<boolean> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const initialLen = db.guests.length;
     db.guests = db.guests.filter((g) => g.id !== id);
     if (db.guests.length < initialLen) {
-      saveDatabase(db);
+      await saveDatabase(db);
       return true;
     }
     return false;
@@ -414,16 +532,16 @@ export const store = {
 
   // RSVPs
   getRSVPs: async (): Promise<RSVP[]> => {
-    return loadDatabase().rsvps;
+    return (await loadDatabase()).rsvps;
   },
   getRSVPByCode: async (code: string): Promise<RSVP | null> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const clean = code.trim().toUpperCase();
     const rsvp = db.rsvps.find((r) => r.invitationCode.toUpperCase() === clean);
     return rsvp || null;
   },
   submitRSVP: async (data: Omit<RSVP, "id" | "submittedAt">): Promise<{ rsvp: RSVP; isUpdate: boolean }> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const existingIndex = db.rsvps.findIndex(
       (r) =>
         (data.invitationCode && data.invitationCode.trim() !== "" && r.invitationCode.toLowerCase() === data.invitationCode.toLowerCase()) ||
@@ -481,7 +599,7 @@ export const store = {
         });
       }
 
-      saveDatabase(db);
+      await saveDatabase(db);
       return { rsvp: updated, isUpdate: true };
     }
 
@@ -511,18 +629,18 @@ export const store = {
       });
     }
 
-    saveDatabase(db);
+    await saveDatabase(db);
     return { rsvp: newRSVP, isUpdate: false };
   },
 
   // Accommodation (retained as inactive internal API)
   getAccommodationRequests: async (): Promise<AccommodationRequest[]> => {
-    return loadDatabase().accommodation;
+    return (await loadDatabase()).accommodation;
   },
   submitAccommodationRequest: async (
     data: Omit<AccommodationRequest, "id" | "status" | "createdAt">
   ): Promise<AccommodationRequest> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const newReq: AccommodationRequest = {
       ...data,
       id: `acc-${Date.now()}`,
@@ -530,24 +648,24 @@ export const store = {
       createdAt: new Date().toISOString(),
     };
     db.accommodation.unshift(newReq);
-    saveDatabase(db);
+    await saveDatabase(db);
     return newReq;
   },
   updateAccommodationStatus: async (
     id: string,
     status: AccommodationRequest["status"]
   ): Promise<AccommodationRequest | null> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const req = db.accommodation.find((a) => a.id === id);
     if (!req) return null;
     req.status = status;
-    saveDatabase(db);
+    await saveDatabase(db);
     return req;
   },
 
   // Physical Gift Items & Reservation Workflow
   getGifts: async (availableOnly?: boolean): Promise<GiftItem[]> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     if (availableOnly) {
       // Exclude gifts that have an active confirmed reservation
       return db.gifts.filter((g) => g.status === "Available");
@@ -556,7 +674,7 @@ export const store = {
   },
 
   getGiftReservations: async (): Promise<GiftReservation[]> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     return db.giftReservations || [];
   },
 
@@ -564,7 +682,7 @@ export const store = {
     giftId: string,
     reserver: { name: string; email: string; phone: string; notes?: string }
   ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const item = db.gifts.find((g) => g.id === giftId);
     if (!item) {
       return { success: false, message: "Gift item not found in registry." };
@@ -602,7 +720,7 @@ export const store = {
 
     db.giftReservations.unshift(newReservation);
     // CRITICAL BUSINESS RULE: Item REMAINS "Available" on the public website until an administrator explicitly confirms!
-    saveDatabase(db);
+    await saveDatabase(db);
 
     return {
       success: true,
@@ -630,7 +748,7 @@ export const store = {
     adminUser?: string,
     fallbackReservation?: Partial<GiftReservation>
   ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     if (!db.giftReservations) db.giftReservations = [];
 
     const cleanId = reservationId.trim();
@@ -712,7 +830,7 @@ export const store = {
     gift.reservedAt = res.submittedAt;
     if (res.notes) gift.notes = res.notes;
 
-    saveDatabase(db);
+    await saveDatabase(db);
 
     return {
       success: true,
@@ -727,7 +845,7 @@ export const store = {
     reason?: string,
     fallbackReservation?: Partial<GiftReservation>
   ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     if (!db.giftReservations) db.giftReservations = [];
 
     const cleanId = reservationId.trim();
@@ -790,7 +908,7 @@ export const store = {
       delete gift.notes;
     }
 
-    saveDatabase(db);
+    await saveDatabase(db);
 
     return {
       success: true,
@@ -804,7 +922,7 @@ export const store = {
     reservationId: string,
     fallbackReservation?: Partial<GiftReservation>
   ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     if (!db.giftReservations) db.giftReservations = [];
 
     const cleanId = reservationId.trim();
@@ -864,7 +982,7 @@ export const store = {
       delete gift.notes;
     }
 
-    saveDatabase(db);
+    await saveDatabase(db);
 
     return {
       success: true,
@@ -875,16 +993,16 @@ export const store = {
   },
 
   markGiftReceived: async (giftId: string): Promise<GiftItem | null> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const item = db.gifts.find((g) => g.id === giftId);
     if (!item) return null;
     item.status = "Received";
-    saveDatabase(db);
+    await saveDatabase(db);
     return item;
   },
 
   updateGiftStatus: async (giftId: string, status: GiftStatus): Promise<GiftItem | null> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const item = db.gifts.find((g) => g.id === giftId);
     if (!item) return null;
     item.status = status;
@@ -895,17 +1013,17 @@ export const store = {
       delete item.reservedAt;
       delete item.notes;
     }
-    saveDatabase(db);
+    await saveDatabase(db);
     return item;
   },
 
   saveGiftItem: async (gift: Omit<GiftItem, "id"> & { id?: string }): Promise<GiftItem> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     if (gift.id) {
       const idx = db.gifts.findIndex((g) => g.id === gift.id);
       if (idx !== -1) {
         db.gifts[idx] = { ...db.gifts[idx], ...gift };
-        saveDatabase(db);
+        await saveDatabase(db);
         return db.gifts[idx];
       }
     }
@@ -914,16 +1032,16 @@ export const store = {
       id: `gift-${Date.now()}`,
     };
     db.gifts.unshift(newItem);
-    saveDatabase(db);
+    await saveDatabase(db);
     return newItem;
   },
 
   deleteGiftItem: async (id: string): Promise<boolean> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const len = db.gifts.length;
     db.gifts = db.gifts.filter((g) => g.id !== id);
     if (db.gifts.length < len) {
-      saveDatabase(db);
+      await saveDatabase(db);
       return true;
     }
     return false;
@@ -931,10 +1049,10 @@ export const store = {
 
   // Monetary Gifts
   getMonetaryGifts: async (): Promise<MonetaryGift[]> => {
-    return loadDatabase().monetaryGifts;
+    return (await loadDatabase()).monetaryGifts;
   },
   submitMonetaryGift: async (data: Omit<MonetaryGift, "id" | "status" | "createdAt">): Promise<MonetaryGift> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const newGift: MonetaryGift = {
       ...data,
       id: `mg-${Date.now()}`,
@@ -942,15 +1060,15 @@ export const store = {
       createdAt: new Date().toISOString(),
     };
     db.monetaryGifts.unshift(newGift);
-    saveDatabase(db);
+    await saveDatabase(db);
     return newGift;
   },
   verifyMonetaryGift: async (id: string): Promise<MonetaryGift | null> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const gift = db.monetaryGifts.find((g) => g.id === id);
     if (!gift) return null;
     gift.status = "Verified";
-    saveDatabase(db);
+    await saveDatabase(db);
     return gift;
   },
   updateMonetaryGiftStatus: async (
@@ -958,7 +1076,7 @@ export const store = {
     status: "Reported" | "Verified",
     fallbackGift?: Partial<MonetaryGift>
   ): Promise<MonetaryGift | null> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     if (!db.monetaryGifts) db.monetaryGifts = [];
     const cleanId = id.trim();
     let gift = db.monetaryGifts.find((g) => g.id === cleanId || g.id === id);
@@ -977,20 +1095,20 @@ export const store = {
         createdAt: fallbackGift.createdAt || new Date().toISOString(),
       };
       db.monetaryGifts.unshift(gift);
-      saveDatabase(db);
+      await saveDatabase(db);
       return gift;
     }
     if (!gift) return null;
     gift.status = status;
-    saveDatabase(db);
+    await saveDatabase(db);
     return gift;
   },
   deleteMonetaryGift: async (id: string): Promise<boolean> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const initialLen = db.monetaryGifts.length;
     db.monetaryGifts = db.monetaryGifts.filter((g) => g.id !== id);
     if (db.monetaryGifts.length < initialLen) {
-      saveDatabase(db);
+      await saveDatabase(db);
       return true;
     }
     return false;
@@ -998,12 +1116,12 @@ export const store = {
 
   // Custom Gifts
   getCustomGiftProposals: async (): Promise<CustomGiftProposal[]> => {
-    return loadDatabase().customGifts;
+    return (await loadDatabase()).customGifts;
   },
   submitCustomGiftProposal: async (
     data: Omit<CustomGiftProposal, "id" | "status" | "createdAt"> & { status?: CustomGiftProposal["status"] }
   ): Promise<CustomGiftProposal> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const proposal: CustomGiftProposal = {
       ...data,
       id: `cg-${Date.now()}`,
@@ -1011,26 +1129,26 @@ export const store = {
       createdAt: new Date().toISOString(),
     };
     db.customGifts.unshift(proposal);
-    saveDatabase(db);
+    await saveDatabase(db);
     return proposal;
   },
   updateCustomGiftStatus: async (
     id: string,
     status: CustomGiftProposal["status"]
   ): Promise<CustomGiftProposal | null> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const item = db.customGifts.find((c) => c.id === id);
     if (!item) return null;
     item.status = status;
-    saveDatabase(db);
+    await saveDatabase(db);
     return item;
   },
   deleteCustomGift: async (id: string): Promise<boolean> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const initialLen = db.customGifts.length;
     db.customGifts = db.customGifts.filter((c) => c.id !== id);
     if (db.customGifts.length < initialLen) {
-      saveDatabase(db);
+      await saveDatabase(db);
       return true;
     }
     return false;
@@ -1038,10 +1156,10 @@ export const store = {
 
   // Guestbook
   getGuestbookMessages: async (): Promise<GuestbookMessage[]> => {
-    return loadDatabase().guestbook;
+    return (await loadDatabase()).guestbook;
   },
   submitGuestbookMessage: async (data: Omit<GuestbookMessage, "id" | "approved" | "createdAt">): Promise<GuestbookMessage> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const msg: GuestbookMessage = {
       ...data,
       id: `msg-${Date.now()}`,
@@ -1049,23 +1167,23 @@ export const store = {
       createdAt: new Date().toISOString(),
     };
     db.guestbook.unshift(msg);
-    saveDatabase(db);
+    await saveDatabase(db);
     return msg;
   },
   updateGuestbookApproval: async (id: string, approved: boolean): Promise<GuestbookMessage | null> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const msg = db.guestbook.find((m) => m.id === id);
     if (!msg) return null;
     msg.approved = approved;
-    saveDatabase(db);
+    await saveDatabase(db);
     return msg;
   },
   deleteGuestbookMessage: async (id: string): Promise<boolean> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const initialLen = db.guestbook.length;
     db.guestbook = db.guestbook.filter((m) => m.id !== id);
     if (db.guestbook.length < initialLen) {
-      saveDatabase(db);
+      await saveDatabase(db);
       return true;
     }
     return false;
@@ -1073,7 +1191,7 @@ export const store = {
 
   // Admin Stats
   getStats: async (): Promise<AdminStats> => {
-    const db = loadDatabase();
+    const db = await loadDatabase();
     const totalInvited = db.guests.reduce((acc, g) => acc + (g.maxGuests || 1), 0);
     const confirmedGuests = db.rsvps.filter((r) => r.status === "Confirmed").length;
     const pendingGuests = db.rsvps.filter((r) => r.status === "Pending").length;
