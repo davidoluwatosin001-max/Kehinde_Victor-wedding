@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Gift, Copy, Check, Heart, Lock, Sparkles, Send, Home, Utensils } from "lucide-react";
+import { Gift, Copy, Check, Heart, Lock, Sparkles, Send, Home, Utensils, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { GiftItem, SiteSettings } from "@/types";
@@ -10,7 +10,8 @@ export const GiftSection: React.FC = () => {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [gifts, setGifts] = useState<GiftItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [copied, setCopied] = useState(false);
+  const [copied1, setCopied1] = useState(false);
+  const [copied2, setCopied2] = useState(false);
 
   // Modal States
   const [isSentGiftModalOpen, setIsSentGiftModalOpen] = useState(false);
@@ -49,7 +50,7 @@ export const GiftSection: React.FC = () => {
   const fetchGiftData = async () => {
     try {
       const [resGifts, resSettings] = await Promise.all([
-        fetch("/api/gifts"),
+        fetch("/api/gifts?availableOnly=true"),
         fetch("/api/settings"),
       ]);
       if (resGifts.ok) {
@@ -69,14 +70,24 @@ export const GiftSection: React.FC = () => {
     fetchGiftData();
   }, []);
 
-  const handleCopyAccount = () => {
+  const handleCopyAccount1 = () => {
     const bankName = settings?.bankName || "Guaranty Trust Bank (GTBank)";
     const accountName = settings?.accountName || "Victor Odudu";
     const accountNumber = settings?.accountNumber || "0431652266";
     const textToCopy = `Bank: ${bankName}\nAccount Name: ${accountName}\nAccount Number: ${accountNumber}`;
     navigator.clipboard.writeText(textToCopy);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
+    setCopied1(true);
+    setTimeout(() => setCopied1(false), 3000);
+  };
+
+  const handleCopyAccount2 = () => {
+    const bankName = settings?.bankName2 || "United Bank for Africa (UBA)";
+    const accountName = settings?.accountName2 || "Kehinde Balogun";
+    const accountNumber = settings?.accountNumber2 || "2118555964";
+    const textToCopy = `Bank: ${bankName}\nAccount Name: ${accountName}\nAccount Number: ${accountNumber}`;
+    navigator.clipboard.writeText(textToCopy);
+    setCopied2(true);
+    setTimeout(() => setCopied2(false), 3000);
   };
 
   // Submit Monetary Gift Notification
@@ -123,7 +134,7 @@ export const GiftSection: React.FC = () => {
     }
   };
 
-  // Submit Physical Gift Reservation
+  // Submit Physical Gift Reservation Request
   const handleReserveSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedGift) return;
@@ -145,16 +156,16 @@ export const GiftSection: React.FC = () => {
 
       setFeedbackMessage({
         type: "success",
-        text: `Item reserved in your name! We are grateful for your blessing, ${reserveForm.reservedBy}.`,
+        text: `Thank you so much, ${reserveForm.reservedBy}! Your reservation request for "${selectedGift.name}" has been received and is awaiting administrative approval.`,
       });
-      fetchGiftData(); // refresh list to show "Reserved"
+      fetchGiftData();
 
       setTimeout(() => {
         setIsReserveModalOpen(false);
         setSelectedGift(null);
         setFeedbackMessage(null);
         setReserveForm({ reservedBy: "", reservedEmail: "", reservedPhone: "", notes: "" });
-      }, 2500);
+      }, 3000);
     } catch (err: any) {
       setFeedbackMessage({ type: "error", text: err.message || "An error occurred" });
     } finally {
@@ -228,7 +239,7 @@ export const GiftSection: React.FC = () => {
 
         {/* CATEGORY A: MONETARY GIFTS */}
         <div className="card-luxury rounded-3xl p-6 sm:p-10 mb-12 border-1.5 border-gold shadow-xl relative overflow-hidden">
-          <div className="max-w-3xl mx-auto text-center">
+          <div className="max-w-4xl mx-auto text-center">
             <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gold/15 text-forest border border-gold/40 uppercase tracking-widest mb-3">
               Category A
             </span>
@@ -236,44 +247,93 @@ export const GiftSection: React.FC = () => {
               Our Home &amp; Future Fund
             </h3>
             <p className="text-xs sm:text-sm text-charcoal/70 mt-2 max-w-lg mx-auto">
-              For family and friends who prefer to give a monetary gift towards our new home foundation, you can transfer directly to our wedding account below.
+              For family and friends who prefer to give a monetary gift towards our new home foundation, you can transfer directly to either of our wedding accounts below.
             </p>
 
-            {/* Bank Card Presentation */}
-            <div className="bg-[#FAF4E6] border border-gold/60 rounded-2xl p-5 sm:p-7 my-6 text-left max-w-md mx-auto shadow-sm relative">
-              <div className="flex justify-between items-start mb-4">
+            {/* Dual Bank Account Presentation */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 my-6 text-left">
+              {/* Bank Account 1: GTBank (Victor Odudu) */}
+              <div className="bg-[#FAF4E6] border border-gold/60 rounded-2xl p-5 sm:p-6 shadow-sm relative flex flex-col justify-between">
                 <div>
-                  <span className="text-[10px] uppercase tracking-wider text-charcoal/60 font-semibold block">Bank</span>
-                  <span className="font-serif text-lg text-forest-deep font-bold">{settings?.bankName || "Guaranty Trust Bank (GTBank)"}</span>
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-charcoal/60 font-semibold block">Primary Bank</span>
+                      <span className="font-serif text-base sm:text-lg text-forest-deep font-bold">
+                        {settings?.bankName || "Guaranty Trust Bank (GTBank)"}
+                      </span>
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center border border-gold/40 shrink-0">
+                      <Home className="w-4 h-4 text-forest" />
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <span className="text-[10px] uppercase tracking-wider text-charcoal/60 font-semibold block">Account Name</span>
+                    <span className="font-sans text-sm text-forest-deep font-semibold">
+                      {settings?.accountName || "Victor Odudu"}
+                    </span>
+                  </div>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center border border-gold/40">
-                  <Home className="w-4 h-4 text-forest" />
+
+                <div className="pt-3 border-t border-gold/30 flex justify-between items-center gap-2">
+                  <div>
+                    <span className="text-[10px] uppercase tracking-wider text-gold font-semibold block">Account Number</span>
+                    <span className="font-mono text-lg sm:text-xl tracking-wider text-forest-deep font-bold">
+                      {settings?.accountNumber || "0431652266"}
+                    </span>
+                  </div>
+                  <Button
+                    onClick={handleCopyAccount1}
+                    variant="gold"
+                    size="sm"
+                    className="flex items-center gap-1.5 shrink-0"
+                  >
+                    {copied1 ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copied1 ? "Copied!" : "Copy Details"}</span>
+                  </Button>
                 </div>
               </div>
 
-              <div className="mb-4">
-                <span className="text-[10px] uppercase tracking-wider text-charcoal/60 font-semibold block">Account Name</span>
-                <span className="font-sans text-sm text-forest-deep font-medium">
-                  {settings?.accountName || "Victor Odudu"}
-                </span>
-              </div>
-
-              <div className="pt-3 border-t border-gold/30 flex justify-between items-center">
+              {/* Bank Account 2: UBA (Kehinde Balogun) */}
+              <div className="bg-[#FAF4E6] border border-gold/60 rounded-2xl p-5 sm:p-6 shadow-sm relative flex flex-col justify-between">
                 <div>
-                  <span className="text-[10px] uppercase tracking-wider text-gold font-semibold block">Account Number</span>
-                  <span className="font-mono text-xl sm:text-2xl tracking-widest text-forest-deep font-bold">
-                    {settings?.accountNumber || "0431652266"}
-                  </span>
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-charcoal/60 font-semibold block">Alternative Bank</span>
+                      <span className="font-serif text-base sm:text-lg text-forest-deep font-bold">
+                        {settings?.bankName2 || "United Bank for Africa (UBA)"}
+                      </span>
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center border border-gold/40 shrink-0">
+                      <Building2 className="w-4 h-4 text-forest" />
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <span className="text-[10px] uppercase tracking-wider text-charcoal/60 font-semibold block">Account Name</span>
+                    <span className="font-sans text-sm text-forest-deep font-semibold">
+                      {settings?.accountName2 || "Kehinde Balogun"}
+                    </span>
+                  </div>
                 </div>
-                <Button
-                  onClick={handleCopyAccount}
-                  variant="gold"
-                  size="sm"
-                  className="flex items-center gap-1.5"
-                >
-                  {copied ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
-                  {copied ? "Copied!" : "Copy Details"}
-                </Button>
+
+                <div className="pt-3 border-t border-gold/30 flex justify-between items-center gap-2">
+                  <div>
+                    <span className="text-[10px] uppercase tracking-wider text-gold font-semibold block">Account Number</span>
+                    <span className="font-mono text-lg sm:text-xl tracking-wider text-forest-deep font-bold">
+                      {settings?.accountNumber2 || "2118555964"}
+                    </span>
+                  </div>
+                  <Button
+                    onClick={handleCopyAccount2}
+                    variant="gold"
+                    size="sm"
+                    className="flex items-center gap-1.5 shrink-0"
+                  >
+                    {copied2 ? <Check className="w-3.5 h-3.5 text-white" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copied2 ? "Copied!" : "Copy Details"}</span>
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -301,7 +361,7 @@ export const GiftSection: React.FC = () => {
           </div>
         </div>
 
-        {/* CATEGORY B: PHYSICAL GIFT REGISTRY */}
+        {/* CATEGORY B: PHYSICAL GIFT ITEMS (Text-Only Presentation) */}
         <div className="mb-14">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
             <div>
@@ -309,7 +369,7 @@ export const GiftSection: React.FC = () => {
                 Category B
               </span>
               <h3 className="font-serif text-2xl sm:text-3xl text-forest-deep font-semibold">
-                Physical Gift Registry
+                Physical Gift Items
               </h3>
               <p className="text-xs sm:text-sm text-charcoal/70">
                 Reserve a household item you would love to gift the couple for their new home.
@@ -322,7 +382,7 @@ export const GiftSection: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
                     selectedCategory === cat
                       ? "bg-forest text-ivory shadow-sm"
                       : "bg-[#FAF4E6] text-charcoal border border-gold/40 hover:bg-gold/15"
@@ -334,80 +394,48 @@ export const GiftSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Registry Grid */}
+          {/* Clean Text-Only Item Listings */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredGifts.map((gift) => (
               <div
                 key={gift.id}
-                className="card-luxury rounded-3xl p-5 border border-gold/40 flex flex-col justify-between hover:shadow-2xl transition-all duration-300 relative group overflow-hidden bg-white/90"
+                className="card-luxury rounded-3xl p-6 border border-gold/40 flex flex-col justify-between hover:shadow-xl transition-all duration-300 relative bg-white/90"
               >
                 <div>
-                  {/* Gift Image Container */}
-                  <div className="relative w-full h-48 rounded-2xl overflow-hidden mb-4 bg-gradient-to-br from-gold/5 to-forest/5 border border-gold/25 flex items-center justify-center">
-                    {gift.image ? (
-                      <img
-                        src={gift.image}
-                        alt={gift.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-14 h-14 rounded-full bg-gold/20 flex items-center justify-center text-forest">
-                        <Gift className="w-7 h-7 text-forest" />
-                      </div>
-                    )}
-                    <span
-                      className={`absolute top-3 right-3 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm backdrop-blur-md ${
-                        gift.status === "Available"
-                          ? "bg-emerald-600/90 text-white border border-emerald-400"
-                          : gift.status === "Reserved"
-                          ? "bg-amber-600/90 text-white border border-amber-400"
-                          : "bg-blue-600/90 text-white border border-blue-400"
-                      }`}
-                    >
-                      {gift.status}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-start gap-2 mb-2">
+                  <div className="flex justify-between items-center gap-2 mb-3">
                     <span className="text-[10px] uppercase tracking-wider font-semibold text-gold bg-gold/15 px-2.5 py-0.5 rounded-full border border-gold/30">
                       {gift.category}
+                    </span>
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      Available
                     </span>
                   </div>
 
                   <h4 className="font-serif text-lg font-bold text-forest-deep leading-snug mb-2">
                     {gift.name}
                   </h4>
-                  <p className="font-sans text-xs text-charcoal/75 line-clamp-3 leading-relaxed mb-4">
+                  <p className="font-sans text-xs sm:text-sm text-charcoal/80 leading-relaxed mb-4">
                     {gift.description}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-gold/20 flex items-center justify-between">
-                  {gift.status === "Available" ? (
-                    <Button
-                      onClick={() => {
-                        setSelectedGift(gift);
-                        setIsReserveModalOpen(true);
-                      }}
-                      variant="gold"
-                      size="sm"
-                      className="w-full"
-                    >
-                      Reserve Gift
-                    </Button>
-                  ) : (
-                    <div className="w-full text-center py-1.5 text-xs text-charcoal/60 bg-black/5 rounded-full flex items-center justify-center gap-1.5">
-                      <Lock className="w-3 h-3 text-gold" />
-                      <span>{gift.status === "Reserved" ? "Reserved by a Guest" : "Gift Received"}</span>
-                    </div>
-                  )}
+                <div className="pt-4 border-t border-gold/25 mt-2">
+                  <Button
+                    onClick={() => {
+                      setSelectedGift(gift);
+                      setIsReserveModalOpen(true);
+                    }}
+                    variant="gold"
+                    size="sm"
+                    className="w-full flex items-center justify-center gap-1.5"
+                  >
+                    <span>Reserve Gift Item</span>
+                  </Button>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
 
       </div>
 
@@ -448,7 +476,7 @@ export const GiftSection: React.FC = () => {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label htmlFor="giftAmount" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
-                  Amount Sent (₦) *
+                  Amount (₦) *
                 </label>
                 <input
                   id="giftAmount"
@@ -463,11 +491,11 @@ export const GiftSection: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="giftDate" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
-                  Date of Transfer *
+                <label htmlFor="paymentDate" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
+                  Transfer Date *
                 </label>
                 <input
-                  id="giftDate"
+                  id="paymentDate"
                   required
                   type="date"
                   value={monetaryForm.paymentDate}
@@ -480,40 +508,71 @@ export const GiftSection: React.FC = () => {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label htmlFor="donorEmail" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
-                  Email (For Receipt)
+                  Email (Optional)
                 </label>
                 <input
                   id="donorEmail"
                   type="email"
-                  placeholder="e.g. name@example.com"
+                  placeholder="e.g. adeleke@example.com"
                   value={monetaryForm.senderEmail}
                   onChange={(e) => setMonetaryForm({ ...monetaryForm, senderEmail: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 bg-white/90 text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-forest"
                 />
               </div>
               <div>
-                <label htmlFor="donorReference" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
-                  Bank / Reference Note
+                <label htmlFor="donorPhone" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
+                  Phone (WhatsApp)
                 </label>
                 <input
-                  id="donorReference"
-                  type="text"
-                  placeholder="e.g. GTB / Ref 1234"
-                  value={monetaryForm.reference}
-                  onChange={(e) => setMonetaryForm({ ...monetaryForm, reference: e.target.value })}
+                  id="donorPhone"
+                  type="tel"
+                  placeholder="e.g. 0803 123 4567"
+                  value={monetaryForm.senderPhone}
+                  onChange={(e) => setMonetaryForm({ ...monetaryForm, senderPhone: e.target.value })}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 bg-white/90 text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-forest"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="donorNote" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
-                Loving Message to Couple
+              <label htmlFor="bankUsed" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
+                Bank Sent To / Method
+              </label>
+              <select
+                id="bankUsed"
+                value={monetaryForm.bankUsed}
+                onChange={(e) => setMonetaryForm({ ...monetaryForm, bankUsed: e.target.value })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 bg-white/90 text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-forest"
+              >
+                <option value="">Select account used...</option>
+                <option value="Guaranty Trust Bank (GTBank) - Victor Odudu">Guaranty Trust Bank (GTBank) - Victor Odudu</option>
+                <option value="United Bank for Africa (UBA) - Kehinde Balogun">United Bank for Africa (UBA) - Kehinde Balogun</option>
+                <option value="Other Bank Transfer / Mobile Banking">Other Bank Transfer / Mobile Banking</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="refNarration" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
+                Transaction Reference / Narration (Optional)
+              </label>
+              <input
+                id="refNarration"
+                type="text"
+                placeholder="e.g. Session ID or Transfer Narration"
+                value={monetaryForm.reference}
+                onChange={(e) => setMonetaryForm({ ...monetaryForm, reference: e.target.value })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 bg-white/90 text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-forest"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="donorMessage" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
+                Blessing / Well-Wishes to the Couple
               </label>
               <textarea
-                id="donorNote"
+                id="donorMessage"
                 rows={2}
-                placeholder="Write a sweet prayer or blessing..."
+                placeholder="May your home be filled with endless joy and peace..."
                 value={monetaryForm.message}
                 onChange={(e) => setMonetaryForm({ ...monetaryForm, message: e.target.value })}
                 className="w-full px-3.5 py-2 rounded-xl border border-gold/40 bg-white/90 text-sm text-charcoal focus:outline-none focus:ring-2 focus:ring-forest"
@@ -529,7 +588,7 @@ export const GiftSection: React.FC = () => {
         )}
       </Modal>
 
-      {/* MODAL 2: Reserve Physical Gift */}
+      {/* MODAL 2: Reserve Physical Gift Item (Text-Only Presentation) */}
       <Modal
         isOpen={isReserveModalOpen}
         onClose={() => {
@@ -552,35 +611,25 @@ export const GiftSection: React.FC = () => {
         ) : (
           <form onSubmit={handleReserveSubmit} className="space-y-4">
             {selectedGift && (
-              <div className="flex items-center gap-3.5 p-3 rounded-2xl bg-white/90 border border-gold/30 shadow-sm">
-                {selectedGift.image ? (
-                  <img
-                    src={selectedGift.image}
-                    alt={selectedGift.name}
-                    className="w-16 h-16 rounded-xl object-cover border border-gold/20 shrink-0"
-                  />
-                ) : (
-                  <div className="w-16 h-16 rounded-xl bg-gold/20 flex items-center justify-center shrink-0 text-forest">
-                    <Gift className="w-8 h-8 text-forest" />
-                  </div>
-                )}
-                <div className="min-w-0 flex-1">
-                  <span className="text-[10px] uppercase font-bold text-gold tracking-wider block mb-0.5">
-                    {selectedGift.category}
-                  </span>
-                  <h4 className="font-serif font-bold text-forest-deep text-sm sm:text-base leading-snug line-clamp-1">
-                    {selectedGift.name}
-                  </h4>
-                  <p className="text-[11px] text-charcoal/70 line-clamp-1 mt-0.5">
-                    {selectedGift.description}
-                  </p>
-                </div>
+              <div className="p-4 rounded-2xl bg-[#FAF4E6] border border-gold/40 shadow-sm space-y-1.5">
+                <span className="text-[10px] uppercase font-bold text-gold tracking-wider block">
+                  {selectedGift.category}
+                </span>
+                <h4 className="font-serif font-bold text-forest-deep text-base leading-snug">
+                  {selectedGift.name}
+                </h4>
+                <p className="text-xs text-charcoal/80 leading-relaxed">
+                  {selectedGift.description}
+                </p>
               </div>
             )}
 
-            <p className="text-xs text-charcoal/75 bg-gold/10 p-3 rounded-xl border border-gold/30">
-              Reserving this item prevents duplicate purchases by other guests. Please provide your contact details so Kehinde &amp; Victor can coordinate delivery with you.
-            </p>
+            <div className="text-xs text-charcoal/80 bg-gold/10 p-3.5 rounded-xl border border-gold/30 space-y-1">
+              <p className="font-semibold text-forest-deep">Reservation Confirmation Notice</p>
+              <p>
+                Your reservation request will be submitted to the couple for administrative review and confirmation. Submitting does not automatically lock the item until confirmed.
+              </p>
+            </div>
 
             <div>
               <label htmlFor="reserverName" className="block text-xs font-medium text-forest-deep uppercase tracking-wider mb-1">
@@ -644,7 +693,7 @@ export const GiftSection: React.FC = () => {
 
             <div className="pt-2">
               <Button type="submit" variant="gold" size="md" isLoading={isLoading} className="w-full">
-                Confirm Reservation
+                Submit Reservation Request
               </Button>
             </div>
           </form>

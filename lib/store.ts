@@ -6,6 +6,8 @@ import {
   AccommodationRequest,
   GiftItem,
   GiftStatus,
+  GiftReservation,
+  ReservationStatus,
   MonetaryGift,
   CustomGiftProposal,
   GuestbookMessage,
@@ -21,12 +23,13 @@ export interface WeddingDatabase {
   rsvps: RSVP[];
   accommodation: AccommodationRequest[];
   gifts: GiftItem[];
+  giftReservations: GiftReservation[];
   monetaryGifts: MonetaryGift[];
   customGifts: CustomGiftProposal[];
   guestbook: GuestbookMessage[];
 }
 
-// Initial default site settings
+// Initial default site settings with dual bank accounts
 const initialSettings: SiteSettings = {
   coupleNames: "Kehinde & Victor",
   weddingDate: "2026-11-19T10:00:00+01:00",
@@ -35,6 +38,9 @@ const initialSettings: SiteSettings = {
   bankName: "Guaranty Trust Bank (GTBank)",
   accountName: "Victor Odudu",
   accountNumber: "0431652266",
+  bankName2: "United Bank for Africa (UBA)",
+  accountName2: "Kehinde Balogun",
+  accountNumber2: "2118555964",
   paymentInstructions: "Please include your name in the payment reference or narration so we can identify and acknowledge your loving blessing.",
   storyTitle: "Our Love Story: How Two Hearts Found Their Forever",
   storyContent: [
@@ -94,38 +100,146 @@ const initialRSVPs: RSVP[] = [];
 
 const initialAccommodation: AccommodationRequest[] = [];
 
+// Complete original 15 physical gift items restored as text-only specifications without images
 const initialGifts: GiftItem[] = [
   {
     id: "gift-maxi-cooker",
     name: "MAXI 60*60 (3+1) Burner Gas Cooker Wood",
     category: "Kitchen",
     description: "3 Gas Burners, 1 Electrical Burner: 1000W, Wood finish heat-resistant cabinet, auto-ignition, and gas oven. Model: MAXI606031WOOD.",
-    image: "/images/gifts/maxi-gas-cooker.jpg",
     quantity: 1,
     status: "Available",
     estimatedValue: 245000,
+  },
+  {
+    id: "gift-hisense-microwave",
+    name: "Hisense 25L Microwave Oven with Grill",
+    category: "Kitchen",
+    description: "25 Litres digital microwave oven with grill function, defrost setting, mirror black finish, and multi-stage cooking.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 125000,
+  },
+  {
+    id: "gift-silicone-utensils",
+    name: "Silicone Cooking Utensil: Kitchen Ware Sets",
+    category: "Kitchen",
+    description: "Premium food-grade heat-resistant silicone utensil set with ergonomic wooden handles and countertop storage bucket.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 35000,
+  },
+  {
+    id: "gift-dish-rack",
+    name: "Wall-Mounted Kitchen Dish Rack Organizer",
+    category: "Kitchen",
+    description: "Heavy-duty stainless steel wall-mounted kitchen dish drainer rack and space-saving organizer with utensil & cutlery holders.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 48000,
+  },
+  {
+    id: "gift-masterchef-cookware",
+    name: "Master Chef Non-Stick Cookware Set & Frying Pan",
+    category: "Kitchen",
+    description: "Master Chef heavy-gauge non-stick aluminum cooking pot set and frying pan with tempered glass lids and heat-insulated handles.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 75000,
+  },
+  {
+    id: "gift-pressure-cooker",
+    name: "Master Chef Pressure Cooker Pot - 12L",
+    category: "Kitchen",
+    description: "Master Chef 12-Litre heavy-duty aluminum pressure cooker with dual-safety valve system for fast, energy-efficient family cooking.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 62000,
   },
   {
     id: "gift-hisense-washing-machine",
     name: "Hisense 6KG Front Loader Automatic Washing Machine",
     category: "Home Appliances",
     description: "6KG capacity front load automatic washing machine with smart wash cycles, quick wash, 1200 RPM spin and energy-saving inverter motor.",
-    image: "/images/gifts/hisense-washing-machine.jpg",
     quantity: 1,
     status: "Available",
     estimatedValue: 310000,
+  },
+  {
+    id: "gift-hisense-chest-freezer",
+    name: "Hisense 217 Litres Chest Freezer",
+    category: "Home Appliances",
+    description: "217L deep chest freezer with fast-freeze technology, tropicalized heavy-duty compressor, and lockable safety lid.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 295000,
+  },
+  {
+    id: "gift-hisense-refrigerator",
+    name: "Hisense 124L Top Mount Double Door Refrigerator",
+    category: "Home Appliances",
+    description: "124-Litre double door top-mount refrigerator with separate freezer compartment, vegetable crisper and low-noise operation.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 240000,
   },
   {
     id: "gift-smart-tv",
     name: "Smart UHD 4K TV 55-Inch",
     category: "Home Appliances",
     description: "55-Inch 4K Ultra HD Smart TV with HDR, bezel-less cinematic display, Dolby Audio, Bluetooth, and preloaded streaming apps.",
-    image: "/images/gifts/smart-tv.jpg",
     quantity: 1,
     status: "Available",
     estimatedValue: 420000,
   },
+  {
+    id: "gift-hisense-soundbar",
+    name: "Hisense 2.1 Ch Soundbar with Wireless Subwoofer",
+    category: "Home Appliances",
+    description: "2.1 Channel home theater soundbar system featuring wireless subwoofer, Bluetooth 5.0 streaming, and HDMI ARC support.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 145000,
+  },
+  {
+    id: "gift-binatone-fan",
+    name: "Binatone 18\" Rechargeable Fan",
+    category: "Home Appliances",
+    description: "18-inch multi-speed standing rechargeable fan with remote control, LED night light, and long-lasting backup battery.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 85000,
+  },
+  {
+    id: "gift-midea-ac",
+    name: "Midea 1.5HP Wall Inverter Air Conditioner",
+    category: "Home Appliances",
+    description: "1.5 Horsepower high-efficiency inverter split unit AC with rapid cooling, whisper-quiet operation and eco-friendly refrigerant.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 380000,
+  },
+  {
+    id: "gift-itel-inverter",
+    name: "Itel 4kW 24V 1-Phase Inverter + MPPT 6kW",
+    category: "Home Appliances",
+    description: "4kW 24V single-phase pure sine wave hybrid solar inverter with integrated 6kW MPPT charge controller for seamless home power.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 680000,
+  },
+  {
+    id: "gift-cola-solar-battery",
+    name: "Cola Solar Lithium Battery 280AH",
+    category: "Home Appliances",
+    description: "280Ah high-capacity LiFePO4 deep-cycle solar lithium battery with built-in Smart BMS for long lifespan and reliable home energy storage.",
+    quantity: 1,
+    status: "Available",
+    estimatedValue: 950000,
+  },
 ];
+
+const initialGiftReservations: GiftReservation[] = [];
 
 const initialMonetaryGifts: MonetaryGift[] = [];
 
@@ -141,6 +255,7 @@ function getInitialDatabase(): WeddingDatabase {
     rsvps: [...initialRSVPs],
     accommodation: [...initialAccommodation],
     gifts: [...initialGifts],
+    giftReservations: [...initialGiftReservations],
     monetaryGifts: [...initialMonetaryGifts],
     customGifts: [...initialCustomGifts],
     guestbook: [...initialGuestbook],
@@ -174,6 +289,7 @@ function loadDatabase(): WeddingDatabase {
       memoryCache = {
         ...getInitialDatabase(),
         ...parsed,
+        giftReservations: parsed.giftReservations || [],
       };
       return memoryCache!;
     }
@@ -190,6 +306,7 @@ function loadDatabase(): WeddingDatabase {
       memoryCache = {
         ...getInitialDatabase(),
         ...parsed,
+        giftReservations: parsed.giftReservations || [],
       };
       // Pre-seed /tmp
       try {
@@ -404,7 +521,7 @@ export const store = {
     return { rsvp: newRSVP, isUpdate: false };
   },
 
-  // Accommodation
+  // Accommodation (retained as inactive internal API)
   getAccommodationRequests: async (): Promise<AccommodationRequest[]> => {
     return loadDatabase().accommodation;
   },
@@ -434,36 +551,213 @@ export const store = {
     return req;
   },
 
-  // Gifts
-  getGifts: async (): Promise<GiftItem[]> => {
-    return loadDatabase().gifts;
+  // Physical Gift Items & Reservation Workflow
+  getGifts: async (availableOnly?: boolean): Promise<GiftItem[]> => {
+    const db = loadDatabase();
+    if (availableOnly) {
+      // Exclude gifts that have an active confirmed reservation
+      return db.gifts.filter((g) => g.status === "Available");
+    }
+    return db.gifts;
   },
+
+  getGiftReservations: async (): Promise<GiftReservation[]> => {
+    const db = loadDatabase();
+    return db.giftReservations || [];
+  },
+
+  submitGiftReservation: async (
+    giftId: string,
+    reserver: { name: string; email: string; phone: string; notes?: string }
+  ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
+    const db = loadDatabase();
+    const item = db.gifts.find((g) => g.id === giftId);
+    if (!item) {
+      return { success: false, message: "Gift item not found in registry." };
+    }
+
+    // If an administrator already confirmed a reservation for this item:
+    if (item.status === "Reserved") {
+      return {
+        success: false,
+        message: "This precious gift item has already been confirmed and reserved. Please select another lovely item from our registry!",
+      };
+    }
+    if (item.status === "Received") {
+      return {
+        success: false,
+        message: "This gift item has already been delivered and received.",
+      };
+    }
+
+    if (!db.giftReservations) {
+      db.giftReservations = [];
+    }
+
+    const newReservation: GiftReservation = {
+      id: `res-${Date.now()}`,
+      giftId: item.id,
+      giftName: item.name,
+      guestName: reserver.name,
+      email: reserver.email,
+      phone: reserver.phone,
+      notes: reserver.notes,
+      status: "Pending", // Awaiting administrator approval
+      submittedAt: new Date().toISOString(),
+    };
+
+    db.giftReservations.unshift(newReservation);
+    // CRITICAL BUSINESS RULE: Item REMAINS "Available" on the public website until an administrator explicitly confirms!
+    saveDatabase(db);
+
+    return {
+      success: true,
+      message: `Thank you so much! Your reservation request for "${item.name}" has been submitted and is awaiting administrative approval.`,
+      reservation: newReservation,
+      gift: item,
+    };
+  },
+
+  // Backward compatibility alias
   reserveGift: async (
     giftId: string,
     reserver: { name: string; email: string; phone: string; notes?: string }
   ): Promise<{ success: boolean; message: string; gift?: GiftItem }> => {
+    const res = await store.submitGiftReservation(giftId, reserver);
+    return {
+      success: res.success,
+      message: res.message,
+      gift: res.gift,
+    };
+  },
+
+  confirmGiftReservation: async (
+    reservationId: string,
+    adminUser?: string
+  ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
     const db = loadDatabase();
-    const item = db.gifts.find((g) => g.id === giftId);
-    if (!item) {
-      return { success: false, message: "Gift item not found" };
-    }
-    if (item.status === "Reserved") {
-      return { success: false, message: "This precious gift has already been reserved by another guest. Please choose another lovely item!" };
-    }
-    if (item.status === "Received") {
-      return { success: false, message: "This gift item has already been received." };
+    if (!db.giftReservations) db.giftReservations = [];
+
+    const res = db.giftReservations.find((r) => r.id === reservationId);
+    if (!res) {
+      return { success: false, message: "Reservation record not found." };
     }
 
-    item.status = "Reserved";
-    item.reservedBy = reserver.name;
-    item.reservedEmail = reserver.email;
-    item.reservedPhone = reserver.phone;
-    item.reservedAt = new Date().toISOString();
-    if (reserver.notes) item.notes = reserver.notes;
+    const gift = db.gifts.find((g) => g.id === res.giftId);
+    if (!gift) {
+      return { success: false, message: "Associated gift item not found in registry." };
+    }
+
+    // Atomic server-side concurrency check:
+    // Ensure no other active reservation for this exclusive gift item has already been confirmed
+    const existingConfirmed = db.giftReservations.find(
+      (r) => r.giftId === res.giftId && r.id !== reservationId && r.status === "Confirmed"
+    );
+    if (existingConfirmed || gift.status === "Reserved") {
+      return {
+        success: false,
+        message: `Conflict: Another reservation for "${gift.name}" has already been confirmed (${existingConfirmed?.guestName || gift.reservedBy}). You cannot confirm multiple active reservations for an exclusive item.`,
+      };
+    }
+
+    // Set reservation to Confirmed
+    res.status = "Confirmed";
+    res.reviewedAt = new Date().toISOString();
+    res.reviewedBy = adminUser || "Admin";
+
+    // Update physical gift item availability to Reserved
+    gift.status = "Reserved";
+    gift.reservedBy = res.guestName;
+    gift.reservedEmail = res.email;
+    gift.reservedPhone = res.phone;
+    gift.reservedAt = res.submittedAt;
+    if (res.notes) gift.notes = res.notes;
+
     saveDatabase(db);
 
-    return { success: true, message: "Thank you so much! The gift has been reserved in your name.", gift: item };
+    return {
+      success: true,
+      message: `Reservation confirmed for ${res.guestName}. "${gift.name}" is now reserved and removed from the public available list.`,
+      reservation: res,
+      gift,
+    };
   },
+
+  rejectGiftReservation: async (
+    reservationId: string,
+    reason?: string
+  ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
+    const db = loadDatabase();
+    if (!db.giftReservations) db.giftReservations = [];
+
+    const res = db.giftReservations.find((r) => r.id === reservationId);
+    if (!res) {
+      return { success: false, message: "Reservation record not found." };
+    }
+
+    const gift = db.gifts.find((g) => g.id === res.giftId);
+
+    // Update status to Rejected (never deleted!)
+    res.status = "Rejected";
+    res.reviewedAt = new Date().toISOString();
+    if (reason) res.adminNotes = reason;
+
+    // If this reservation was previously confirmed, reset the gift item to Available
+    if (gift && gift.status === "Reserved" && gift.reservedBy === res.guestName) {
+      gift.status = "Available";
+      delete gift.reservedBy;
+      delete gift.reservedEmail;
+      delete gift.reservedPhone;
+      delete gift.reservedAt;
+      delete gift.notes;
+    }
+
+    saveDatabase(db);
+
+    return {
+      success: true,
+      message: `Reservation request from ${res.guestName} was rejected. The item remains available on the public website.`,
+      reservation: res,
+      gift,
+    };
+  },
+
+  cancelGiftReservation: async (
+    reservationId: string
+  ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
+    const db = loadDatabase();
+    if (!db.giftReservations) db.giftReservations = [];
+
+    const res = db.giftReservations.find((r) => r.id === reservationId);
+    if (!res) {
+      return { success: false, message: "Reservation record not found." };
+    }
+
+    const gift = db.gifts.find((g) => g.id === res.giftId);
+
+    // Set status to Cancelled (retained in historical records)
+    res.status = "Cancelled";
+    res.reviewedAt = new Date().toISOString();
+
+    if (gift) {
+      gift.status = "Available";
+      delete gift.reservedBy;
+      delete gift.reservedEmail;
+      delete gift.reservedPhone;
+      delete gift.reservedAt;
+      delete gift.notes;
+    }
+
+    saveDatabase(db);
+
+    return {
+      success: true,
+      message: `Reservation was cancelled. "${gift?.name || 'Item'}" is now available again for reservation.`,
+      reservation: res,
+      gift,
+    };
+  },
+
   markGiftReceived: async (giftId: string): Promise<GiftItem | null> => {
     const db = loadDatabase();
     const item = db.gifts.find((g) => g.id === giftId);
@@ -472,6 +766,7 @@ export const store = {
     saveDatabase(db);
     return item;
   },
+
   updateGiftStatus: async (giftId: string, status: GiftStatus): Promise<GiftItem | null> => {
     const db = loadDatabase();
     const item = db.gifts.find((g) => g.id === giftId);
@@ -487,6 +782,7 @@ export const store = {
     saveDatabase(db);
     return item;
   },
+
   saveGiftItem: async (gift: Omit<GiftItem, "id"> & { id?: string }): Promise<GiftItem> => {
     const db = loadDatabase();
     if (gift.id) {
@@ -505,6 +801,7 @@ export const store = {
     saveDatabase(db);
     return newItem;
   },
+
   deleteGiftItem: async (id: string): Promise<boolean> => {
     const db = loadDatabase();
     const len = db.gifts.length;
@@ -651,6 +948,10 @@ export const store = {
     const monetaryGiftsReportedTotal = db.monetaryGifts
       .reduce((sum, g) => sum + (g.amount || 0), 0);
 
+    const reservations = db.giftReservations || [];
+    const pendingReservationsCount = reservations.filter((r) => r.status === "Pending").length;
+    const confirmedReservationsCount = reservations.filter((r) => r.status === "Confirmed").length;
+
     return {
       totalInvited,
       confirmedGuests,
@@ -666,6 +967,8 @@ export const store = {
       physicalGiftsTotal: db.gifts.length,
       physicalGiftsReserved: db.gifts.filter((g) => g.status === "Reserved").length,
       physicalGiftsReceived: db.gifts.filter((g) => g.status === "Received").length,
+      pendingReservationsCount,
+      confirmedReservationsCount,
       messagesCount: db.guestbook.length,
       messagesApprovedCount: db.guestbook.filter((m) => m.approved).length,
     };

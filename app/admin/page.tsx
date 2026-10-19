@@ -36,6 +36,8 @@ import {
   RSVP,
   GiftItem,
   GiftStatus,
+  GiftReservation,
+  ReservationStatus,
   MonetaryGift,
   CustomGiftProposal,
   GuestbookMessage,
@@ -44,13 +46,14 @@ import {
 
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<
-    "overview" | "guests" | "rsvps" | "gifts" | "monetary" | "custom" | "guestbook" | "settings"
+    "overview" | "guests" | "rsvps" | "reservations" | "gifts" | "monetary" | "custom" | "guestbook" | "settings"
   >("overview");
 
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [guests, setGuests] = useState<any[]>([]);
   const [rsvps, setRsvps] = useState<RSVP[]>([]);
   const [gifts, setGifts] = useState<GiftItem[]>([]);
+  const [giftReservations, setGiftReservations] = useState<GiftReservation[]>([]);
   const [monetaryGifts, setMonetaryGifts] = useState<MonetaryGift[]>([]);
   const [customGifts, setCustomGifts] = useState<CustomGiftProposal[]>([]);
   const [guestbook, setGuestbook] = useState<GuestbookMessage[]>([]);
@@ -58,10 +61,12 @@ export default function AdminDashboardPage() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [reservationFilter, setReservationFilter] = useState<string>("all");
   const [adminGiftCategory, setAdminGiftCategory] = useState<string>("All");
   const [monetaryFilter, setMonetaryFilter] = useState<string>("all");
   const [customFilter, setCustomFilter] = useState<string>("all");
   const [guestbookFilter, setGuestbookFilter] = useState<string>("all");
+  const [refreshToast, setRefreshToast] = useState("");
 
   // Modals & Inspection Detail State
   const [isAddGuestModalOpen, setIsAddGuestModalOpen] = useState(false);
@@ -84,7 +89,7 @@ export default function AdminDashboardPage() {
   const [saveSuccessMsg, setSaveSuccessMsg] = useState("");
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const refreshAllData = async () => {
+  const refreshAllData = async (showToast: boolean = false) => {
     setIsRefreshing(true);
     try {
       const [
@@ -92,6 +97,7 @@ export default function AdminDashboardPage() {
         resGuests,
         resRsvps,
         resGifts,
+        resReservations,
         resMonetary,
         resCustom,
         resGuestbook,
@@ -101,6 +107,7 @@ export default function AdminDashboardPage() {
         fetch("/api/admin/guests"),
         fetch("/api/rsvp"),
         fetch("/api/gifts"),
+        fetch("/api/gifts/reservations"),
         fetch("/api/gifts/monetary"),
         fetch("/api/gifts/custom"),
         fetch("/api/guestbook"),
@@ -111,10 +118,16 @@ export default function AdminDashboardPage() {
       if (resGuests.ok) setGuests((await resGuests.json()).guests || []);
       if (resRsvps.ok) setRsvps((await resRsvps.json()).rsvps || []);
       if (resGifts.ok) setGifts((await resGifts.json()).gifts || []);
+      if (resReservations.ok) setGiftReservations((await resReservations.json()).reservations || []);
       if (resMonetary.ok) setMonetaryGifts((await resMonetary.json()).monetaryGifts || []);
       if (resCustom.ok) setCustomGifts((await resCustom.json()).proposals || []);
       if (resGuestbook.ok) setGuestbook((await resGuestbook.json()).messages || []);
       if (resSet.ok) setSettings((await resSet.json()).settings);
+
+      if (showToast) {
+        setRefreshToast("Authoritative live database records refreshed successfully!");
+        setTimeout(() => setRefreshToast(""), 3500);
+      }
     } catch (e) {
       console.error("Failed to load admin data", e);
     } finally {
@@ -125,6 +138,71 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     refreshAllData();
   }, []);
+
+  // Confirm Gift Reservation Action
+  const handleConfirmReservation = async (reservationId: string) => {
+    try {
+      const res = await fetch("/api/gifts/reservations", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reservationId, action: "confirm", adminUser: "Couple/Admin" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Failed to confirm reservation");
+      } else {
+        setRefreshToast(data.message || "Reservation confirmed successfully!");
+        setTimeout(() => setRefreshToast(""), 4000);
+        refreshAllData();
+      }
+    } catch (e: any) {
+      alert(e.message || "Failed to confirm reservation");
+    }
+  };
+
+  // Reject Gift Reservation Action
+  const handleRejectReservation = async (reservationId: string) => {
+    const reason = prompt("Enter an optional note or reason for rejection:") || undefined;
+    try {
+      const res = await fetch("/api/gifts/reservations", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reservationId, action: "reject", reason }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Failed to reject reservation");
+      } else {
+        setRefreshToast("Reservation request rejected. The item remains available on the public site.");
+        setTimeout(() => setRefreshToast(""), 4000);
+        refreshAllData();
+      }
+    } catch (e: any) {
+      alert(e.message || "Failed to reject reservation");
+    }
+  };
+
+  // Cancel Gift Reservation Action
+  const handleCancelReservation = async (reservationId: string) => {
+    if (!confirm("Are you sure you want to cancel this reservation? The gift item will be reset to Available on the public site.")) return;
+    try {
+      const res = await fetch("/api/gifts/reservations", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reservationId, action: "cancel" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Failed to cancel reservation");
+      } else {
+        setRefreshToast("Reservation cancelled and item reset to Available.");
+        setTimeout(() => setRefreshToast(""), 4000);
+        refreshAllData();
+      }
+    } catch (e: any) {
+      alert(e.message || "Failed to cancel reservation");
+    }
+  };
 
   // Add Guest Action
   const handleAddGuest = async (e: React.FormEvent) => {
@@ -302,6 +380,19 @@ export default function AdminDashboardPage() {
     return matchesSearch && matchesFilter;
   });
 
+  // Filtered Gift Reservations
+  const filteredReservations = giftReservations.filter((r) => {
+    const matchesSearch =
+      r.guestName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.giftName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.phone.includes(searchTerm);
+    const matchesFilter =
+      reservationFilter === "all" ||
+      r.status.toLowerCase() === reservationFilter.toLowerCase();
+    return matchesSearch && matchesFilter;
+  });
+
   // Filtered Monetary Gifts
   const filteredMonetaryGifts = monetaryGifts.filter((g) => {
     if (monetaryFilter === "all") return true;
@@ -335,18 +426,20 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Non-destructive Refresh All Data Button */}
           <button
-            onClick={refreshAllData}
+            onClick={() => refreshAllData(true)}
             disabled={isRefreshing}
-            className="p-2 text-xs font-semibold rounded-xl border border-gold/40 bg-white text-forest-deep hover:bg-gold/10 transition-colors shadow-sm disabled:opacity-50"
-            title="Refresh All Data"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl border border-gold/40 bg-white text-forest-deep hover:bg-gold/10 transition-colors shadow-sm disabled:opacity-50 cursor-pointer min-h-[44px]"
+            title="Non-destructive refresh of authoritative live database records"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-gold ${isRefreshing ? "animate-spin" : ""}`} />
+            <span>{isRefreshing ? "Refreshing..." : "Refresh All Data"}</span>
           </button>
           <a
             href="/api/admin/export-csv"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl border border-gold bg-[#FAF4E6] text-forest-deep hover:bg-gold/15 transition-colors shadow-sm"
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl border border-gold bg-[#FAF4E6] text-forest-deep hover:bg-gold/15 transition-colors shadow-sm min-h-[44px]"
           >
             <Download className="w-3.5 h-3.5 text-gold" />
             <span>Export CSV</span>
@@ -355,7 +448,7 @@ export default function AdminDashboardPage() {
             onClick={() => setIsAddGuestModalOpen(true)}
             variant="gold"
             size="sm"
-            className="flex items-center gap-1.5"
+            className="flex items-center gap-1.5 min-h-[44px]"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Guest</span>
@@ -363,8 +456,21 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
+      {/* Real-time Refresh Toast Notification */}
+      {refreshToast && (
+        <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-semibold flex items-center justify-between shadow-sm animate-fade-in">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{refreshToast}</span>
+          </div>
+          <button onClick={() => setRefreshToast("")} className="text-emerald-700 hover:text-emerald-950 p-1">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
       {/* Primary KPI Metric Cards Grid - Fully Clickable */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4">
         {/* Total Invited */}
         <div
           onClick={() => {
@@ -463,7 +569,7 @@ export default function AdminDashboardPage() {
             setActiveTab("monetary");
             setMonetaryFilter("all");
           }}
-          className="card-luxury p-4 rounded-2xl border border-gold/60 bg-[#F5EEDB] shadow-sm col-span-2 sm:col-span-1 cursor-pointer hover:border-gold hover:shadow-md transition-all active:scale-[0.98] group"
+          className="card-luxury p-4 rounded-2xl border border-gold/60 bg-[#F5EEDB] shadow-sm cursor-pointer hover:border-gold hover:shadow-md transition-all active:scale-[0.98] group"
           title="Click to view monetary gifts and verify transfers"
         >
           <div className="flex justify-between items-center text-forest-deep mb-1">
@@ -479,6 +585,38 @@ export default function AdminDashboardPage() {
             {stats?.monetaryGiftsCount ?? 0} reported &middot; {formatNaira(stats?.monetaryGiftsReportedTotal ?? 0)}
           </p>
         </div>
+
+        {/* Gift Reservations Metric Card */}
+        <div
+          onClick={() => {
+            setActiveTab("reservations");
+            setReservationFilter("all");
+            setSearchTerm("");
+          }}
+          className={`card-luxury p-4 rounded-2xl border shadow-sm cursor-pointer hover:shadow-md transition-all active:scale-[0.98] group ${
+            (stats?.pendingReservationsCount ?? 0) > 0
+              ? "border-amber-400 bg-amber-50/60 hover:border-amber-500"
+              : "border-gold/40 hover:border-gold"
+          }`}
+          title="Click to review and approve physical gift reservations"
+        >
+          <div className="flex justify-between items-center text-forest-deep mb-1">
+            <span className="text-[11px] uppercase font-bold tracking-wider group-hover:text-forest transition-colors">
+              Reservations
+            </span>
+            <Clock className="w-4 h-4 text-gold group-hover:scale-110 transition-transform" />
+          </div>
+          <span className="font-serif text-2xl sm:text-3xl font-bold text-forest-deep block truncate">
+            {stats?.pendingReservationsCount ?? 0}
+          </span>
+          <p className="text-[10px] mt-1 font-semibold">
+            {(stats?.pendingReservationsCount ?? 0) > 0 ? (
+              <span className="text-amber-800">● Needs Approval</span>
+            ) : (
+              <span className="text-forest/70">{stats?.confirmedReservationsCount ?? 0} confirmed</span>
+            )}
+          </p>
+        </div>
       </div>
 
       {/* Navigation Tabs Bar */}
@@ -486,8 +624,15 @@ export default function AdminDashboardPage() {
         {[
           { id: "overview", label: "Overview", icon: Sparkles },
           { id: "guests", label: `Guests (${guests.length})`, icon: Users },
-          { id: "rsvps", label: `RSVP Submissions (${rsvps.length})`, icon: CheckCircle },
-          { id: "gifts", label: `Physical Registry (${gifts.length})`, icon: Gift },
+          { id: "rsvps", label: `RSVPs (${rsvps.length})`, icon: CheckCircle },
+          {
+            id: "reservations",
+            label: `Gift Reservations (${giftReservations.length}${
+              (stats?.pendingReservationsCount ?? 0) > 0 ? ` · ${stats?.pendingReservationsCount} pending` : ""
+            })`,
+            icon: Clock,
+          },
+          { id: "gifts", label: `Physical Items (${gifts.length})`, icon: Gift },
           { id: "monetary", label: `Monetary Gifts (${monetaryGifts.length})`, icon: Coins },
           { id: "custom", label: `Custom Gifts (${customGifts.length})`, icon: HeartHandshake },
           { id: "guestbook", label: `Guestbook (${guestbook.length})`, icon: MessageSquareHeart },
@@ -872,17 +1017,195 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* TAB 4: PHYSICAL GIFTS REGISTRY */}
+      {/* TAB: GIFT RESERVATIONS APPROVAL WORKFLOW */}
+      {activeTab === "reservations" && (
+        <div className="card-luxury p-6 rounded-3xl border border-gold/40 shadow-sm space-y-5">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+            <div>
+              <h3 className="font-serif text-xl font-bold text-forest-deep">
+                Gift Reservations &amp; Approval Workflow ({giftReservations.length})
+              </h3>
+              <p className="text-xs text-charcoal/70 mt-0.5">
+                Review guest reservation requests. Confirming a request marks the gift as &ldquo;Reserved&rdquo; and removes it from public availability. Rejecting or cancelling keeps the gift available.
+              </p>
+            </div>
+
+            {/* Filter Status Buttons */}
+            <div className="flex flex-wrap gap-2">
+              {[
+                { id: "all", label: `All (${giftReservations.length})` },
+                { id: "Pending", label: `Pending (${giftReservations.filter((r) => r.status === "Pending").length})` },
+                { id: "Confirmed", label: `Confirmed (${giftReservations.filter((r) => r.status === "Confirmed").length})` },
+                { id: "Rejected", label: `Rejected (${giftReservations.filter((r) => r.status === "Rejected").length})` },
+                { id: "Cancelled", label: `Cancelled (${giftReservations.filter((r) => r.status === "Cancelled").length})` },
+              ].map((pill) => (
+                <button
+                  key={pill.id}
+                  onClick={() => setReservationFilter(pill.id)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer min-h-[36px] ${
+                    reservationFilter.toLowerCase() === pill.id.toLowerCase()
+                      ? "bg-forest text-ivory shadow-sm"
+                      : "bg-[#FAF4E6] text-charcoal border border-gold/40 hover:bg-gold/15"
+                  }`}
+                >
+                  {pill.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {filteredReservations.length === 0 ? (
+            <div className="p-12 text-center text-xs text-charcoal/60 bg-white/50 rounded-2xl border border-gold/20">
+              <Clock className="w-8 h-8 text-gold/40 mx-auto mb-2" />
+              <p className="font-semibold text-forest-deep text-sm">No reservations found matching this view.</p>
+              <p className="text-[11px] mt-1">When guests submit a reservation request for an item on the website, it will appear here for review.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredReservations.map((res) => {
+                // Check if multiple pending requests exist for the same item
+                const otherPendingCount = giftReservations.filter(
+                  (other) => other.giftId === res.giftId && other.id !== res.id && other.status === "Pending"
+                ).length;
+                const hasPendingConflict = res.status === "Pending" && otherPendingCount > 0;
+
+                return (
+                  <div
+                    key={res.id}
+                    className={`p-5 rounded-2xl border transition-all ${
+                      res.status === "Pending"
+                        ? "bg-amber-50/40 border-amber-300 shadow-sm"
+                        : res.status === "Confirmed"
+                        ? "bg-emerald-50/30 border-emerald-300"
+                        : res.status === "Rejected"
+                        ? "bg-red-50/20 border-red-200 opacity-80"
+                        : "bg-gray-50/50 border-gray-200 opacity-70"
+                    }`}
+                  >
+                    {/* Multi-Request Conflict Alert Banner */}
+                    {hasPendingConflict && (
+                      <div className="mb-3.5 p-3 rounded-xl bg-amber-100/90 border border-amber-300 text-amber-950 text-xs font-semibold flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
+                        <span>
+                          Notice: There {otherPendingCount === 1 ? "is 1 other pending request" : `are ${otherPendingCount} other pending requests`} for this exact item. Confirming this request will mark &ldquo;{res.giftName}&rdquo; as Reserved and prevent others from being confirmed.
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                      <div className="space-y-1.5 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h4 className="font-serif text-base sm:text-lg font-bold text-forest-deep">
+                            {res.giftName}
+                          </h4>
+                          <span
+                            className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                              res.status === "Pending"
+                                ? "bg-amber-200 text-amber-900 border border-amber-400"
+                                : res.status === "Confirmed"
+                                ? "bg-emerald-200 text-emerald-900 border border-emerald-400"
+                                : res.status === "Rejected"
+                                ? "bg-red-100 text-red-800 border border-red-300"
+                                : "bg-gray-200 text-gray-800 border border-gray-300"
+                            }`}
+                          >
+                            {res.status}
+                          </span>
+                        </div>
+
+                        <div className="text-xs text-charcoal/80 flex flex-wrap items-center gap-x-4 gap-y-1">
+                          <span>
+                            Requested by: <strong className="text-forest-deep font-semibold">{res.guestName}</strong>
+                          </span>
+                          <span>
+                            Email:{" "}
+                            <a href={`mailto:${res.email}`} className="text-forest hover:underline">
+                              {res.email}
+                            </a>
+                          </span>
+                          <span>
+                            Phone:{" "}
+                            <a href={`tel:${res.phone}`} className="text-forest font-semibold hover:underline">
+                              {res.phone}
+                            </a>
+                          </span>
+                          <span className="text-charcoal/60">
+                            Submitted: {formatDate(res.submittedAt)}
+                          </span>
+                        </div>
+
+                        {res.notes && (
+                          <div className="mt-2 text-xs bg-white/80 p-2.5 rounded-xl border border-gold/25 text-charcoal/90">
+                            <span className="font-semibold text-gold block text-[10px] uppercase">Guest Note / Delivery Plans:</span>
+                            <p className="italic mt-0.5">&ldquo;{res.notes}&rdquo;</p>
+                          </div>
+                        )}
+
+                        {res.reviewedAt && (
+                          <div className="text-[11px] text-charcoal/60 mt-1">
+                            Reviewed by <strong className="text-forest-deep">{res.reviewedBy || "Admin"}</strong> on {formatDate(res.reviewedAt)}
+                            {res.adminNotes && ` — Note: ${res.adminNotes}`}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Admin Action Controls */}
+                      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 pt-2 md:pt-0 shrink-0">
+                        {res.status === "Pending" && (
+                          <>
+                            <Button
+                              onClick={() => handleConfirmReservation(res.id)}
+                              variant="gold"
+                              size="sm"
+                              className="flex items-center gap-1.5 min-h-[44px] px-4"
+                            >
+                              <CheckCircle className="w-4 h-4 text-forest" />
+                              <span>Confirm Reservation</span>
+                            </Button>
+                            <Button
+                              onClick={() => handleRejectReservation(res.id)}
+                              variant="outline"
+                              size="sm"
+                              className="text-red-700 hover:bg-red-50 border-red-300 min-h-[44px] px-3"
+                            >
+                              <X className="w-4 h-4 text-red-600" />
+                              <span>Reject</span>
+                            </Button>
+                          </>
+                        )}
+
+                        {res.status === "Confirmed" && (
+                          <Button
+                            onClick={() => handleCancelReservation(res.id)}
+                            variant="outline"
+                            size="sm"
+                            className="text-amber-800 hover:bg-amber-50 border-amber-300 min-h-[44px] px-3"
+                          >
+                            <XCircle className="w-4 h-4 text-amber-700" />
+                            <span>Cancel Reservation</span>
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 4: PHYSICAL GIFT ITEMS INVENTORY */}
       {activeTab === "gifts" && (
         <div className="space-y-6">
           <div className="card-luxury p-6 rounded-3xl border border-gold/40 shadow-sm space-y-4">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
               <div>
                 <h3 className="font-serif text-xl font-bold text-forest-deep">
-                  Physical Registry Items ({gifts.length})
+                  Physical Gift Items Inventory ({gifts.length})
                 </h3>
-                <p className="text-xs text-charcoal/60">
-                  Curation retained to 3 select household items. Manage reservations and fulfillment.
+                <p className="text-xs text-charcoal/70">
+                  All 15 wedding gift items. Text specifications and live registry status.
                 </p>
               </div>
 
@@ -892,7 +1215,7 @@ export default function AdminDashboardPage() {
                   <button
                     key={cat}
                     onClick={() => setAdminGiftCategory(cat)}
-                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer min-h-[36px] ${
                       adminGiftCategory === cat
                         ? "bg-forest text-ivory shadow-sm"
                         : "bg-white text-charcoal border border-gold/40 hover:bg-gold/10"
@@ -916,22 +1239,15 @@ export default function AdminDashboardPage() {
                 .map((g) => (
                   <div
                     key={g.id}
-                    className="p-5 rounded-2xl bg-white/80 border border-gold/30 flex flex-col justify-between hover:shadow-lg transition-all"
+                    className="p-5 rounded-2xl bg-white/90 border border-gold/30 flex flex-col justify-between hover:shadow-lg transition-all"
                   >
                     <div>
-                      {/* Product Image */}
-                      {g.image && (
-                        <div className="w-full h-40 rounded-xl overflow-hidden mb-3 bg-gold/10 border border-gold/20">
-                          <img src={g.image} alt={g.name} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="text-[10px] uppercase font-bold text-gold px-2 py-0.5 rounded-md bg-gold/10">
+                      <div className="flex justify-between items-start mb-2.5">
+                        <span className="text-[10px] uppercase font-bold text-gold px-2.5 py-0.5 rounded-md bg-gold/10 border border-gold/25">
                           {g.category}
                         </span>
                         <span
-                          className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                          className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
                             g.status === "Available"
                               ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
                               : g.status === "Reserved"
@@ -943,7 +1259,7 @@ export default function AdminDashboardPage() {
                         </span>
                       </div>
                       <h4 className="font-serif font-bold text-forest-deep text-base">{g.name}</h4>
-                      <p className="text-xs text-charcoal/70 line-clamp-3 mt-1">{g.description}</p>
+                      <p className="text-xs text-charcoal/80 leading-relaxed mt-2">{g.description}</p>
                       {g.estimatedValue && (
                         <p className="text-xs font-semibold text-gold mt-2">
                           Est. Value: {formatNaira(g.estimatedValue)}
@@ -951,8 +1267,8 @@ export default function AdminDashboardPage() {
                       )}
 
                       {g.reservedBy && (
-                        <div className="text-xs font-semibold text-forest mt-3 bg-[#FAF4E6] p-3 rounded-xl border border-gold/25 space-y-1">
-                          <p className="text-gold font-bold text-[10px] uppercase">Reserved In Name Of:</p>
+                        <div className="text-xs text-forest mt-3 bg-[#FAF4E6] p-3 rounded-xl border border-gold/30 space-y-1">
+                          <p className="text-gold font-bold text-[10px] uppercase tracking-wider">Reserved In Name Of:</p>
                           <p className="text-forest-deep text-sm font-bold">{g.reservedBy}</p>
                           {g.reservedPhone && <p className="text-[11px] text-charcoal/70">Phone: {g.reservedPhone}</p>}
                           {g.reservedEmail && <p className="text-[11px] text-charcoal/70">Email: {g.reservedEmail}</p>}
@@ -968,6 +1284,7 @@ export default function AdminDashboardPage() {
                             onClick={() => handleUpdateGiftStatus(g.id, "Received")}
                             variant="gold"
                             size="sm"
+                            className="min-h-[40px]"
                           >
                             Mark as Received
                           </Button>
@@ -975,6 +1292,7 @@ export default function AdminDashboardPage() {
                             onClick={() => handleUpdateGiftStatus(g.id, "Available")}
                             variant="outline"
                             size="sm"
+                            className="min-h-[40px]"
                           >
                             Reset to Available
                           </Button>
@@ -985,12 +1303,13 @@ export default function AdminDashboardPage() {
                           onClick={() => handleUpdateGiftStatus(g.id, "Available")}
                           variant="outline"
                           size="sm"
+                          className="min-h-[40px]"
                         >
                           Reset to Available
                         </Button>
                       )}
                       {g.status === "Available" && (
-                        <span className="text-[11px] text-emerald-700 font-medium py-1">
+                        <span className="text-[11px] text-emerald-700 font-semibold py-1">
                           ✓ Available for reservation on public site
                         </span>
                       )}
@@ -1001,6 +1320,7 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       )}
+
 
       {/* TAB 5: MONETARY GIFTS / "I'VE SENT A GIFT" */}
       {activeTab === "monetary" && (
@@ -1367,6 +1687,46 @@ export default function AdminDashboardPage() {
                 type="text"
                 value={settings.accountNumber}
                 onChange={(e) => setSettings({ ...settings, accountNumber: e.target.value })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 text-xs bg-white font-mono font-bold"
+              />
+            </div>
+          </div>
+
+          {/* Secondary Bank Account (UBA) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            <div>
+              <label htmlFor="cmsBank2" className="block text-xs font-medium uppercase tracking-wider text-forest-deep mb-1">
+                Secondary Bank Name
+              </label>
+              <input
+                id="cmsBank2"
+                type="text"
+                value={settings.bankName2 || "United Bank for Africa (UBA)"}
+                onChange={(e) => setSettings({ ...settings, bankName2: e.target.value })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 text-xs bg-white"
+              />
+            </div>
+            <div>
+              <label htmlFor="cmsAccName2" className="block text-xs font-medium uppercase tracking-wider text-forest-deep mb-1">
+                Secondary Account Name
+              </label>
+              <input
+                id="cmsAccName2"
+                type="text"
+                value={settings.accountName2 || "Kehinde Balogun"}
+                onChange={(e) => setSettings({ ...settings, accountName2: e.target.value })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 text-xs bg-white"
+              />
+            </div>
+            <div>
+              <label htmlFor="cmsAccNum2" className="block text-xs font-medium uppercase tracking-wider text-forest-deep mb-1">
+                Secondary Account Number
+              </label>
+              <input
+                id="cmsAccNum2"
+                type="text"
+                value={settings.accountNumber2 || "2118555964"}
+                onChange={(e) => setSettings({ ...settings, accountNumber2: e.target.value })}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-gold/40 text-xs bg-white font-mono font-bold"
               />
             </div>

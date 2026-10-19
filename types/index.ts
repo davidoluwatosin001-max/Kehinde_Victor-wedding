@@ -85,6 +85,23 @@ export interface GiftItem {
   notes?: string;
 }
 
+export type ReservationStatus = 'Pending' | 'Confirmed' | 'Rejected' | 'Cancelled';
+
+export interface GiftReservation {
+  id: string;
+  giftId: string;
+  giftName: string;
+  guestName: string;
+  email: string;
+  phone: string;
+  notes?: string;
+  status: ReservationStatus;
+  submittedAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  adminNotes?: string;
+}
+
 export interface MonetaryGift {
   id: string;
   senderName: string;
@@ -124,9 +141,14 @@ export interface SiteSettings {
   weddingDate: string; // ISO string e.g. "2026-11-19T10:00:00+01:00"
   tagline: string;
   hashtag: string;
+  // Primary Account (GTBank)
   bankName: string;
   accountName: string;
   accountNumber: string;
+  // Secondary Account (UBA)
+  bankName2?: string;
+  accountName2?: string;
+  accountNumber2?: string;
   paymentInstructions: string;
   storyTitle: string;
   storyContent: string[];
@@ -152,6 +174,8 @@ export interface AdminStats {
   physicalGiftsTotal: number;
   physicalGiftsReserved: number;
   physicalGiftsReceived: number;
+  pendingReservationsCount: number;
+  confirmedReservationsCount: number;
   messagesCount: number;
   messagesApprovedCount: number;
 }

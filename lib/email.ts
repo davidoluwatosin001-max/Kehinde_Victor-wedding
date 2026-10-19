@@ -88,25 +88,60 @@ export function generateRSVPEmailHtml(guestName: string, status: string, guestCo
   `;
 }
 
-export function generateGiftReservationEmailHtml(guestName: string, giftName: string): string {
+export function generateGiftReservationPendingEmailHtml(guestName: string, giftName: string): string {
   return `
     <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; background-color: #FAF4E6; border: 1.5px solid #AD802C; padding: 40px 30px; text-align: center; color: #2B2823;">
       <div style="border: 1px solid #D8B45D; padding: 30px 20px;">
+        <p style="font-size: 13px; letter-spacing: 3px; color: #AD802C; text-transform: uppercase; margin: 0 0 10px;">Ayobamidele '26</p>
         <h1 style="font-size: 26px; color: #0F2116; margin: 0 0 10px;">Kehinde & Victor</h1>
         <p style="font-size: 14px; font-style: italic; color: #AD802C; margin-bottom: 25px;">Bless Our Beginning</p>
         
-        <h2 style="font-size: 20px; color: #1E3B29;">Gift Reservation Confirmed</h2>
+        <h2 style="font-size: 20px; color: #1E3B29;">Gift Reservation Request Received</h2>
         <p style="font-size: 15px; line-height: 1.6; color: #2B2823;">
           Dear <strong>${guestName}</strong>,<br/>
-          Thank you from the bottom of our hearts for reserving:
+          Thank you so much for your thoughtfulness! Your request to reserve the following gift item has been received:
         </p>
-        <div style="background-color: #F1E6CC; padding: 15px; margin: 20px 0; font-size: 16px; font-weight: bold; color: #1E3B29;">
+        <div style="background-color: #F1E6CC; padding: 15px; margin: 20px 0; font-size: 16px; font-weight: bold; color: #1E3B29; border-radius: 6px;">
           ${giftName}
         </div>
-        <p style="font-size: 14px; color: #6E685E;">
-          We are truly grateful for your love and thoughtfulness as we begin this new chapter together.
+        <p style="font-size: 14px; line-height: 1.5; color: #4A453E; background-color: #F8F3E8; border: 1px solid #D8B45D; border-radius: 6px; padding: 12px; margin: 18px 0;">
+          <strong>Status: Pending Administrative Confirmation</strong><br/>
+          To ensure items are not double-booked, reservations are reviewed and confirmed by the couple. You will receive another notification once your reservation is confirmed.
+        </p>
+        <p style="font-size: 13px; color: #6E685E; margin-top: 25px;">
+          For enquiries or adjustments, contact: 0813 676 9807 or 0907 724 9194
         </p>
       </div>
     </div>
   `;
 }
+
+export function generateGiftReservationConfirmedEmailHtml(guestName: string, giftName: string): string {
+  return `
+    <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; background-color: #FAF4E6; border: 1.5px solid #AD802C; padding: 40px 30px; text-align: center; color: #2B2823;">
+      <div style="border: 1px solid #D8B45D; padding: 30px 20px;">
+        <p style="font-size: 13px; letter-spacing: 3px; color: #AD802C; text-transform: uppercase; margin: 0 0 10px;">Ayobamidele '26</p>
+        <h1 style="font-size: 26px; color: #0F2116; margin: 0 0 10px;">Kehinde & Victor</h1>
+        <p style="font-size: 14px; font-style: italic; color: #AD802C; margin-bottom: 25px;">Bless Our Beginning</p>
+        
+        <h2 style="font-size: 20px; color: #1E3B29;">Gift Reservation Confirmed! &#10003;</h2>
+        <p style="font-size: 15px; line-height: 1.6; color: #2B2823;">
+          Dear <strong>${guestName}</strong>,<br/>
+          We have joyfully confirmed your reservation for:
+        </p>
+        <div style="background-color: #F1E6CC; padding: 15px; margin: 20px 0; font-size: 16px; font-weight: bold; color: #1E3B29; border-radius: 6px;">
+          ${giftName}
+        </div>
+        <p style="font-size: 14px; line-height: 1.6; color: #2B2823;">
+          This item is now officially reserved in your honour and marked off our public registry. We are deeply grateful for your generous love and support as we begin our holy union!
+        </p>
+        <p style="font-size: 13px; color: #6E685E; margin-top: 25px;">
+          For delivery coordination, contact: 0813 676 9807 or 0907 724 9194
+        </p>
+      </div>
+    </div>
+  `;
+}
+
+// Backward-compatible alias
+export const generateGiftReservationEmailHtml = generateGiftReservationPendingEmailHtml;
