@@ -14,8 +14,8 @@ export const rsvpSchema = z.object({
   attendingCity: z.string().optional().default(""),
   attendees: z.array(
     z.object({
-      name: z.string().min(1, "Attendee name is required"),
-      dietaryPreference: z.string().optional(),
+      name: z.string().optional().default(""),
+      dietaryPreference: z.string().optional().default(""),
     })
   ).default([]),
   accommodationNeeded: z.boolean().default(false),

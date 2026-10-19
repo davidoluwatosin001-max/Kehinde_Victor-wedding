@@ -140,12 +140,12 @@ export default function AdminDashboardPage() {
   }, []);
 
   // Confirm Gift Reservation Action
-  const handleConfirmReservation = async (reservationId: string) => {
+  const handleConfirmReservation = async (reservationId: string, resObj?: GiftReservation) => {
     try {
       const res = await fetch("/api/gifts/reservations", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reservationId, action: "confirm", adminUser: "Couple/Admin" }),
+        body: JSON.stringify({ reservationId, action: "confirm", adminUser: "Couple/Admin", reservation: resObj }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -161,13 +161,13 @@ export default function AdminDashboardPage() {
   };
 
   // Reject Gift Reservation Action
-  const handleRejectReservation = async (reservationId: string) => {
+  const handleRejectReservation = async (reservationId: string, resObj?: GiftReservation) => {
     const reason = prompt("Enter an optional note or reason for rejection:") || undefined;
     try {
       const res = await fetch("/api/gifts/reservations", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reservationId, action: "reject", reason }),
+        body: JSON.stringify({ reservationId, action: "reject", reason, reservation: resObj }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -183,13 +183,13 @@ export default function AdminDashboardPage() {
   };
 
   // Cancel Gift Reservation Action
-  const handleCancelReservation = async (reservationId: string) => {
+  const handleCancelReservation = async (reservationId: string, resObj?: GiftReservation) => {
     if (!confirm("Are you sure you want to cancel this reservation? The gift item will be reset to Available on the public site.")) return;
     try {
       const res = await fetch("/api/gifts/reservations", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reservationId, action: "cancel" }),
+        body: JSON.stringify({ reservationId, action: "cancel", reservation: resObj }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -258,17 +258,24 @@ export default function AdminDashboardPage() {
   };
 
   // Toggle Monetary Gift Verification
-  const handleToggleMonetaryVerification = async (id: string, currentStatus: "Reported" | "Verified") => {
+  const handleToggleMonetaryVerification = async (id: string, currentStatus: "Reported" | "Verified", giftObj?: MonetaryGift) => {
     const nextStatus = currentStatus === "Verified" ? "Reported" : "Verified";
     try {
       const res = await fetch("/api/gifts/monetary", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, status: nextStatus }),
+        body: JSON.stringify({ id, status: nextStatus, gift: giftObj }),
       });
-      if (res.ok) refreshAllData();
-    } catch (e) {
-      console.error(e);
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "Failed to update monetary gift status");
+      } else {
+        setRefreshToast(data.message || (nextStatus === "Verified" ? "Gift verified successfully and thank-you email sent!" : "Gift marked as Reported."));
+        setTimeout(() => setRefreshToast(""), 4000);
+        refreshAllData();
+      }
+    } catch (e: any) {
+      alert(e.message || "Failed to update status");
     }
   };
 
@@ -1154,7 +1161,7 @@ export default function AdminDashboardPage() {
                         {res.status === "Pending" && (
                           <>
                             <Button
-                              onClick={() => handleConfirmReservation(res.id)}
+                              onClick={() => handleConfirmReservation(res.id, res)}
                               variant="gold"
                               size="sm"
                               className="flex items-center gap-1.5 min-h-[44px] px-4"
@@ -1163,7 +1170,7 @@ export default function AdminDashboardPage() {
                               <span>Confirm Reservation</span>
                             </Button>
                             <Button
-                              onClick={() => handleRejectReservation(res.id)}
+                              onClick={() => handleRejectReservation(res.id, res)}
                               variant="outline"
                               size="sm"
                               className="text-red-700 hover:bg-red-50 border-red-300 min-h-[44px] px-3"
@@ -1176,7 +1183,7 @@ export default function AdminDashboardPage() {
 
                         {res.status === "Confirmed" && (
                           <Button
-                            onClick={() => handleCancelReservation(res.id)}
+                            onClick={() => handleCancelReservation(res.id, res)}
                             variant="outline"
                             size="sm"
                             className="text-amber-800 hover:bg-amber-50 border-amber-300 min-h-[44px] px-3"
@@ -1205,7 +1212,7 @@ export default function AdminDashboardPage() {
                   Physical Gift Items Inventory ({gifts.length})
                 </h3>
                 <p className="text-xs text-charcoal/70">
-                  All 15 wedding gift items. Text specifications and live registry status.
+                  Curated wedding physical gift items and live registry status.
                 </p>
               </div>
 
@@ -1259,12 +1266,6 @@ export default function AdminDashboardPage() {
                         </span>
                       </div>
                       <h4 className="font-serif font-bold text-forest-deep text-base">{g.name}</h4>
-                      <p className="text-xs text-charcoal/80 leading-relaxed mt-2">{g.description}</p>
-                      {g.estimatedValue && (
-                        <p className="text-xs font-semibold text-gold mt-2">
-                          Est. Value: {formatNaira(g.estimatedValue)}
-                        </p>
-                      )}
 
                       {g.reservedBy && (
                         <div className="text-xs text-forest mt-3 bg-[#FAF4E6] p-3 rounded-xl border border-gold/30 space-y-1">
@@ -1401,7 +1402,7 @@ export default function AdminDashboardPage() {
                       <td className="py-2.5 px-3 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
-                            onClick={() => handleToggleMonetaryVerification(mg.id, mg.status)}
+                            onClick={() => handleToggleMonetaryVerification(mg.id, mg.status, mg)}
                             className={`px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-colors ${
                               mg.status === "Verified"
                                 ? "bg-amber-100 text-amber-800 hover:bg-amber-200"

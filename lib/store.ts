@@ -100,142 +100,95 @@ const initialRSVPs: RSVP[] = [];
 
 const initialAccommodation: AccommodationRequest[] = [];
 
-// Complete original 15 physical gift items restored as text-only specifications without images
+// Curated 11 physical gift items (descriptions and cost prices removed as requested)
 const initialGifts: GiftItem[] = [
   {
     id: "gift-maxi-cooker",
     name: "MAXI 60*60 (3+1) Burner Gas Cooker Wood",
     category: "Kitchen",
-    description: "3 Gas Burners, 1 Electrical Burner: 1000W, Wood finish heat-resistant cabinet, auto-ignition, and gas oven. Model: MAXI606031WOOD.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 245000,
   },
   {
     id: "gift-hisense-microwave",
     name: "Hisense 25L Microwave Oven with Grill",
     category: "Kitchen",
-    description: "25 Litres digital microwave oven with grill function, defrost setting, mirror black finish, and multi-stage cooking.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 125000,
   },
   {
     id: "gift-silicone-utensils",
     name: "Silicone Cooking Utensil: Kitchen Ware Sets",
     category: "Kitchen",
-    description: "Premium food-grade heat-resistant silicone utensil set with ergonomic wooden handles and countertop storage bucket.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 35000,
   },
   {
     id: "gift-dish-rack",
     name: "Wall-Mounted Kitchen Dish Rack Organizer",
     category: "Kitchen",
-    description: "Heavy-duty stainless steel wall-mounted kitchen dish drainer rack and space-saving organizer with utensil & cutlery holders.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 48000,
   },
   {
     id: "gift-masterchef-cookware",
     name: "Master Chef Non-Stick Cookware Set & Frying Pan",
     category: "Kitchen",
-    description: "Master Chef heavy-gauge non-stick aluminum cooking pot set and frying pan with tempered glass lids and heat-insulated handles.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 75000,
   },
   {
     id: "gift-pressure-cooker",
     name: "Master Chef Pressure Cooker Pot - 12L",
     category: "Kitchen",
-    description: "Master Chef 12-Litre heavy-duty aluminum pressure cooker with dual-safety valve system for fast, energy-efficient family cooking.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 62000,
   },
   {
-    id: "gift-hisense-washing-machine",
-    name: "Hisense 6KG Front Loader Automatic Washing Machine",
+    id: "gift-freezer-refrigerator",
+    name: "Freezer / Refrigerator",
     category: "Home Appliances",
-    description: "6KG capacity front load automatic washing machine with smart wash cycles, quick wash, 1200 RPM spin and energy-saving inverter motor.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 310000,
-  },
-  {
-    id: "gift-hisense-chest-freezer",
-    name: "Hisense 217 Litres Chest Freezer",
-    category: "Home Appliances",
-    description: "217L deep chest freezer with fast-freeze technology, tropicalized heavy-duty compressor, and lockable safety lid.",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 295000,
-  },
-  {
-    id: "gift-hisense-refrigerator",
-    name: "Hisense 124L Top Mount Double Door Refrigerator",
-    category: "Home Appliances",
-    description: "124-Litre double door top-mount refrigerator with separate freezer compartment, vegetable crisper and low-noise operation.",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 240000,
   },
   {
     id: "gift-smart-tv",
     name: "Smart UHD 4K TV 55-Inch",
     category: "Home Appliances",
-    description: "55-Inch 4K Ultra HD Smart TV with HDR, bezel-less cinematic display, Dolby Audio, Bluetooth, and preloaded streaming apps.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 420000,
   },
   {
     id: "gift-hisense-soundbar",
     name: "Hisense 2.1 Ch Soundbar with Wireless Subwoofer",
     category: "Home Appliances",
-    description: "2.1 Channel home theater soundbar system featuring wireless subwoofer, Bluetooth 5.0 streaming, and HDMI ARC support.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 145000,
   },
   {
     id: "gift-binatone-fan",
     name: "Binatone 18\" Rechargeable Fan",
     category: "Home Appliances",
-    description: "18-inch multi-speed standing rechargeable fan with remote control, LED night light, and long-lasting backup battery.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 85000,
   },
   {
-    id: "gift-midea-ac",
-    name: "Midea 1.5HP Wall Inverter Air Conditioner",
+    id: "gift-ac",
+    name: "AC",
     category: "Home Appliances",
-    description: "1.5 Horsepower high-efficiency inverter split unit AC with rapid cooling, whisper-quiet operation and eco-friendly refrigerant.",
+    description: "",
     quantity: 1,
     status: "Available",
-    estimatedValue: 380000,
-  },
-  {
-    id: "gift-itel-inverter",
-    name: "Itel 4kW 24V 1-Phase Inverter + MPPT 6kW",
-    category: "Home Appliances",
-    description: "4kW 24V single-phase pure sine wave hybrid solar inverter with integrated 6kW MPPT charge controller for seamless home power.",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 680000,
-  },
-  {
-    id: "gift-cola-solar-battery",
-    name: "Cola Solar Lithium Battery 280AH",
-    category: "Home Appliances",
-    description: "280Ah high-capacity LiFePO4 deep-cycle solar lithium battery with built-in Smart BMS for long lifespan and reliable home energy storage.",
-    quantity: 1,
-    status: "Available",
-    estimatedValue: 950000,
   },
 ];
 
@@ -278,6 +231,45 @@ function ensureDirectoryExists(dirPath: string) {
   }
 }
 
+function sanitizeGifts(loadedGifts?: GiftItem[]): GiftItem[] {
+  if (!loadedGifts || loadedGifts.length === 0) {
+    return [...initialGifts];
+  }
+  const removedIds = new Set([
+    "gift-cola-solar-battery",
+    "gift-itel-inverter",
+    "gift-hisense-washing-machine",
+    "gift-hisense-refrigerator",
+    "gift-hisense-chest-freezer",
+    "gift-midea-ac",
+  ]);
+
+  const hasOutdated = loadedGifts.some((g) => removedIds.has(g.id));
+  if (hasOutdated || loadedGifts.length !== initialGifts.length) {
+    return initialGifts.map((initialItem) => {
+      const match = loadedGifts.find((g) => g.id === initialItem.id);
+      if (match) {
+        return {
+          ...initialItem,
+          status: match.status || "Available",
+          reservedBy: match.reservedBy,
+          reservedEmail: match.reservedEmail,
+          reservedPhone: match.reservedPhone,
+          reservedAt: match.reservedAt,
+          notes: match.notes,
+        };
+      }
+      return { ...initialItem };
+    });
+  }
+
+  return loadedGifts.map((g) => ({
+    ...g,
+    description: "",
+    estimatedValue: undefined,
+  }));
+}
+
 function loadDatabase(): WeddingDatabase {
   // 1. Check runtime /tmp cache first (for serverless environments)
   try {
@@ -287,6 +279,7 @@ function loadDatabase(): WeddingDatabase {
       memoryCache = {
         ...getInitialDatabase(),
         ...parsed,
+        gifts: sanitizeGifts(parsed.gifts),
         giftReservations: parsed.giftReservations || [],
       };
       return memoryCache!;
@@ -306,6 +299,7 @@ function loadDatabase(): WeddingDatabase {
       memoryCache = {
         ...getInitialDatabase(),
         ...parsed,
+        gifts: sanitizeGifts(parsed.gifts),
         giftReservations: parsed.giftReservations || [],
       };
       // Pre-seed /tmp
@@ -633,30 +627,75 @@ export const store = {
 
   confirmGiftReservation: async (
     reservationId: string,
-    adminUser?: string
+    adminUser?: string,
+    fallbackReservation?: Partial<GiftReservation>
   ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
     const db = loadDatabase();
     if (!db.giftReservations) db.giftReservations = [];
 
-    const res = db.giftReservations.find((r) => r.id === reservationId);
+    const cleanId = reservationId.trim();
+    let res = db.giftReservations.find(
+      (r) => r.id === cleanId || r.id === reservationId || r.giftId === cleanId || r.giftId === reservationId
+    );
+
+    // If not found in memory, recover from fallback payload if provided
+    if (!res && fallbackReservation && (fallbackReservation.giftId || fallbackReservation.giftName)) {
+      res = {
+        id: fallbackReservation.id || cleanId,
+        giftId: fallbackReservation.giftId || cleanId,
+        giftName: fallbackReservation.giftName || "Gift Item",
+        guestName: fallbackReservation.guestName || "Guest",
+        email: fallbackReservation.email || "",
+        phone: fallbackReservation.phone || "",
+        notes: fallbackReservation.notes || "",
+        status: "Pending",
+        submittedAt: fallbackReservation.submittedAt || new Date().toISOString(),
+      };
+      db.giftReservations.unshift(res);
+    }
+
+    // Fallback: check if reservation is directly tracked on a gift item
+    if (!res) {
+      const matchingGift = db.gifts.find((g) => g.id === cleanId || g.id === reservationId);
+      if (matchingGift) {
+        res = {
+          id: `res-${matchingGift.id}`,
+          giftId: matchingGift.id,
+          giftName: matchingGift.name,
+          guestName: matchingGift.reservedBy || "Guest",
+          email: matchingGift.reservedEmail || "",
+          phone: matchingGift.reservedPhone || "",
+          notes: matchingGift.notes,
+          status: matchingGift.status === "Reserved" ? "Confirmed" : "Pending",
+          submittedAt: matchingGift.reservedAt || new Date().toISOString(),
+        };
+        db.giftReservations.unshift(res);
+      }
+    }
+
     if (!res) {
       return { success: false, message: "Reservation record not found." };
     }
 
-    const gift = db.gifts.find((g) => g.id === res.giftId);
+    let gift = db.gifts.find((g) => g.id === res!.giftId || g.name.toLowerCase() === res!.giftName.toLowerCase());
+    if (!gift) {
+      // Find by partial name match
+      gift = db.gifts.find((g) => g.name.toLowerCase().includes(res!.giftName.toLowerCase()) || res!.giftName.toLowerCase().includes(g.name.toLowerCase()));
+    }
+
     if (!gift) {
       return { success: false, message: "Associated gift item not found in registry." };
     }
 
     // Atomic server-side concurrency check:
-    // Ensure no other active reservation for this exclusive gift item has already been confirmed
+    // Only block if a DIFFERENT reservation was already confirmed for this item
     const existingConfirmed = db.giftReservations.find(
-      (r) => r.giftId === res.giftId && r.id !== reservationId && r.status === "Confirmed"
+      (r) => r.giftId === res!.giftId && r.id !== res!.id && r.status === "Confirmed"
     );
-    if (existingConfirmed || gift.status === "Reserved") {
+    if (existingConfirmed && existingConfirmed.guestName.toLowerCase() !== res.guestName.toLowerCase()) {
       return {
         success: false,
-        message: `Conflict: Another reservation for "${gift.name}" has already been confirmed (${existingConfirmed?.guestName || gift.reservedBy}). You cannot confirm multiple active reservations for an exclusive item.`,
+        message: `Conflict: Another reservation for "${gift.name}" has already been confirmed (${existingConfirmed.guestName}). You cannot confirm multiple active reservations for an exclusive item.`,
       };
     }
 
@@ -685,17 +724,56 @@ export const store = {
 
   rejectGiftReservation: async (
     reservationId: string,
-    reason?: string
+    reason?: string,
+    fallbackReservation?: Partial<GiftReservation>
   ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
     const db = loadDatabase();
     if (!db.giftReservations) db.giftReservations = [];
 
-    const res = db.giftReservations.find((r) => r.id === reservationId);
+    const cleanId = reservationId.trim();
+    let res = db.giftReservations.find(
+      (r) => r.id === cleanId || r.id === reservationId || r.giftId === cleanId || r.giftId === reservationId
+    );
+
+    // If not found in memory, recover from fallback payload if provided
+    if (!res && fallbackReservation && (fallbackReservation.giftId || fallbackReservation.giftName)) {
+      res = {
+        id: fallbackReservation.id || cleanId,
+        giftId: fallbackReservation.giftId || cleanId,
+        giftName: fallbackReservation.giftName || "Gift Item",
+        guestName: fallbackReservation.guestName || "Guest",
+        email: fallbackReservation.email || "",
+        phone: fallbackReservation.phone || "",
+        notes: fallbackReservation.notes || "",
+        status: "Pending",
+        submittedAt: fallbackReservation.submittedAt || new Date().toISOString(),
+      };
+      db.giftReservations.unshift(res);
+    }
+
+    if (!res) {
+      const matchingGift = db.gifts.find((g) => g.id === cleanId || g.id === reservationId);
+      if (matchingGift) {
+        res = {
+          id: `res-${matchingGift.id}`,
+          giftId: matchingGift.id,
+          giftName: matchingGift.name,
+          guestName: matchingGift.reservedBy || "Guest",
+          email: matchingGift.reservedEmail || "",
+          phone: matchingGift.reservedPhone || "",
+          notes: matchingGift.notes,
+          status: "Pending",
+          submittedAt: matchingGift.reservedAt || new Date().toISOString(),
+        };
+        db.giftReservations.unshift(res);
+      }
+    }
+
     if (!res) {
       return { success: false, message: "Reservation record not found." };
     }
 
-    const gift = db.gifts.find((g) => g.id === res.giftId);
+    const gift = db.gifts.find((g) => g.id === res!.giftId || g.name.toLowerCase() === res!.giftName.toLowerCase());
 
     // Update status to Rejected (never deleted!)
     res.status = "Rejected";
@@ -723,17 +801,55 @@ export const store = {
   },
 
   cancelGiftReservation: async (
-    reservationId: string
+    reservationId: string,
+    fallbackReservation?: Partial<GiftReservation>
   ): Promise<{ success: boolean; message: string; reservation?: GiftReservation; gift?: GiftItem }> => {
     const db = loadDatabase();
     if (!db.giftReservations) db.giftReservations = [];
 
-    const res = db.giftReservations.find((r) => r.id === reservationId);
+    const cleanId = reservationId.trim();
+    let res = db.giftReservations.find(
+      (r) => r.id === cleanId || r.id === reservationId || r.giftId === cleanId || r.giftId === reservationId
+    );
+
+    if (!res && fallbackReservation && (fallbackReservation.giftId || fallbackReservation.giftName)) {
+      res = {
+        id: fallbackReservation.id || cleanId,
+        giftId: fallbackReservation.giftId || cleanId,
+        giftName: fallbackReservation.giftName || "Gift Item",
+        guestName: fallbackReservation.guestName || "Guest",
+        email: fallbackReservation.email || "",
+        phone: fallbackReservation.phone || "",
+        notes: fallbackReservation.notes || "",
+        status: "Confirmed",
+        submittedAt: fallbackReservation.submittedAt || new Date().toISOString(),
+      };
+      db.giftReservations.unshift(res);
+    }
+
+    if (!res) {
+      const matchingGift = db.gifts.find((g) => g.id === cleanId || g.id === reservationId);
+      if (matchingGift) {
+        res = {
+          id: `res-${matchingGift.id}`,
+          giftId: matchingGift.id,
+          giftName: matchingGift.name,
+          guestName: matchingGift.reservedBy || "Guest",
+          email: matchingGift.reservedEmail || "",
+          phone: matchingGift.reservedPhone || "",
+          notes: matchingGift.notes,
+          status: "Confirmed",
+          submittedAt: matchingGift.reservedAt || new Date().toISOString(),
+        };
+        db.giftReservations.unshift(res);
+      }
+    }
+
     if (!res) {
       return { success: false, message: "Reservation record not found." };
     }
 
-    const gift = db.gifts.find((g) => g.id === res.giftId);
+    const gift = db.gifts.find((g) => g.id === res!.giftId || g.name.toLowerCase() === res!.giftName.toLowerCase());
 
     // Set status to Cancelled (retained in historical records)
     res.status = "Cancelled";
@@ -837,9 +953,33 @@ export const store = {
     saveDatabase(db);
     return gift;
   },
-  updateMonetaryGiftStatus: async (id: string, status: "Reported" | "Verified"): Promise<MonetaryGift | null> => {
+  updateMonetaryGiftStatus: async (
+    id: string,
+    status: "Reported" | "Verified",
+    fallbackGift?: Partial<MonetaryGift>
+  ): Promise<MonetaryGift | null> => {
     const db = loadDatabase();
-    const gift = db.monetaryGifts.find((g) => g.id === id);
+    if (!db.monetaryGifts) db.monetaryGifts = [];
+    const cleanId = id.trim();
+    let gift = db.monetaryGifts.find((g) => g.id === cleanId || g.id === id);
+    if (!gift && fallbackGift && fallbackGift.senderName) {
+      gift = {
+        id: cleanId,
+        senderName: fallbackGift.senderName,
+        senderEmail: fallbackGift.senderEmail,
+        senderPhone: fallbackGift.senderPhone,
+        amount: Number(fallbackGift.amount || 0),
+        paymentDate: fallbackGift.paymentDate || new Date().toISOString().slice(0, 10),
+        bankUsed: fallbackGift.bankUsed,
+        reference: fallbackGift.reference,
+        message: fallbackGift.message,
+        status,
+        createdAt: fallbackGift.createdAt || new Date().toISOString(),
+      };
+      db.monetaryGifts.unshift(gift);
+      saveDatabase(db);
+      return gift;
+    }
     if (!gift) return null;
     gift.status = status;
     saveDatabase(db);

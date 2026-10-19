@@ -414,9 +414,6 @@ export const GiftSection: React.FC = () => {
                   <h4 className="font-serif text-lg font-bold text-forest-deep leading-snug mb-2">
                     {gift.name}
                   </h4>
-                  <p className="font-sans text-xs sm:text-sm text-charcoal/80 leading-relaxed mb-4">
-                    {gift.description}
-                  </p>
                 </div>
 
                 <div className="pt-4 border-t border-gold/25 mt-2">
@@ -618,9 +615,6 @@ export const GiftSection: React.FC = () => {
                 <h4 className="font-serif font-bold text-forest-deep text-base leading-snug">
                   {selectedGift.name}
                 </h4>
-                <p className="text-xs text-charcoal/80 leading-relaxed">
-                  {selectedGift.description}
-                </p>
               </div>
             )}
 

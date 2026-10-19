@@ -191,11 +191,31 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
     setErrorMessage("");
 
     try {
+      const sanitizedAttendees =
+        formData.guestCount === 1
+          ? [
+              {
+                name: formData.guestName.trim(),
+                dietaryPreference: formData.dietaryRequirements || "",
+              },
+            ]
+          : [
+              {
+                name: formData.attendees[0]?.name?.trim() || formData.guestName.trim(),
+                dietaryPreference: formData.attendees[0]?.dietaryPreference || formData.dietaryRequirements || "",
+              },
+              {
+                name: formData.attendees[1]?.name?.trim() || `${formData.guestName.trim()}'s Companion`,
+                dietaryPreference: formData.attendees[1]?.dietaryPreference || "",
+              },
+            ];
+
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          attendees: sanitizedAttendees,
           invitationCode: code.trim(),
         }),
       });

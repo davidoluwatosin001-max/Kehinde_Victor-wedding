@@ -145,3 +145,47 @@ export function generateGiftReservationConfirmedEmailHtml(guestName: string, gif
 
 // Backward-compatible alias
 export const generateGiftReservationEmailHtml = generateGiftReservationPendingEmailHtml;
+
+export function generateMonetaryGiftVerifiedEmailHtml(
+  senderName: string,
+  amount: number,
+  bankUsed?: string,
+  reference?: string
+): string {
+  const formattedAmount = `₦${Number(amount || 0).toLocaleString()}`;
+  return `
+    <div style="font-family: 'Georgia', serif; max-width: 600px; margin: 0 auto; background-color: #FAF4E6; border: 1.5px solid #AD802C; padding: 40px 30px; text-align: center; color: #2B2823;">
+      <div style="border: 1px solid #D8B45D; padding: 30px 20px;">
+        <p style="font-size: 13px; letter-spacing: 3px; color: #AD802C; text-transform: uppercase; margin: 0 0 10px;">Ayobamidele '26</p>
+        <h1 style="font-size: 26px; color: #0F2116; margin: 0 0 10px;">Kehinde & Victor</h1>
+        <p style="font-size: 14px; font-style: italic; color: #AD802C; margin-bottom: 25px;">Two Hearts. One Journey Forever.</p>
+        
+        <h2 style="font-size: 20px; color: #1E3B29;">Bank Transfer Received & Acknowledged! &#10003;</h2>
+        <p style="font-size: 15px; line-height: 1.6; color: #2B2823;">
+          Dear <strong>${senderName}</strong>,<br/>
+          We are writing with full and joyful hearts to confirm that your monetary gift has been received and verified by us:
+        </p>
+        <div style="background-color: #F1E6CC; padding: 18px; margin: 20px 0; border-radius: 8px; border: 1px solid #D8B45D;">
+          <p style="margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: #AD802C; font-weight: bold;">Verified Amount</p>
+          <p style="margin: 5px 0 0; font-size: 26px; font-weight: bold; color: #1E3B29; font-family: monospace;">${formattedAmount}</p>
+          ${bankUsed || reference ? `
+            <p style="margin: 8px 0 0; font-size: 12px; color: #6E685E;">
+              ${[bankUsed ? `Bank: ${bankUsed}` : "", reference ? `Ref: ${reference}` : ""].filter(Boolean).join(" &middot; ")}
+            </p>
+          ` : ""}
+        </div>
+        <p style="font-size: 15px; line-height: 1.6; color: #2B2823; margin: 20px 0;">
+          Thank you so deeply for honouring us and sowing into our new beginning. May God Almighty pour back into your life, bless the work of your hands, and enrich you abundantly in Jesus&rsquo; name!
+        </p>
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #D8B45D/40;">
+          <p style="font-size: 14px; color: #1E3B29; font-weight: bold; margin: 0 0 4px;">With All Our Love & Gratitude,</p>
+          <p style="font-size: 16px; color: #0F2116; font-style: italic; margin: 0;">Kehinde & Victor (Ayobamidele '26)</p>
+          <p style="font-size: 12px; color: #6E685E; margin-top: 15px;">
+            Enquiries: 0813 676 9807 &middot; 0907 724 9194
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+

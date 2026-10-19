@@ -6,6 +6,24 @@ import { sendEmail, generateRSVPEmailHtml } from "@/lib/email";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    // Auto-sanitize attendees if omitted or empty
+    if (!body.attendees || !Array.isArray(body.attendees) || body.attendees.length === 0) {
+      body.attendees = [
+        {
+          name: typeof body.guestName === "string" ? body.guestName.trim() : "",
+          dietaryPreference: body.dietaryRequirements || "",
+        },
+      ];
+    } else {
+      body.attendees = body.attendees.map((att: any, idx: number) => ({
+        name: typeof att?.name === "string" && att.name.trim() !== ""
+          ? att.name.trim()
+          : (idx === 0 && typeof body.guestName === "string" ? body.guestName.trim() : `Attendee ${idx + 1}`),
+        dietaryPreference: att?.dietaryPreference || "",
+      }));
+    }
+
     const validated = rsvpSchema.parse(body);
 
     const { rsvp, isUpdate } = await store.submitRSVP(validated);
