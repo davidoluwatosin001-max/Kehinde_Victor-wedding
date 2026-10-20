@@ -135,7 +135,7 @@ export const GiftSection: React.FC = () => {
     }
   };
 
-  // Submit Physical Gift Reservation Request
+  // Submit Gifts in Kind Reservation Request
   const handleReserveSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedGift) return;
@@ -362,7 +362,7 @@ export const GiftSection: React.FC = () => {
           </div>
         </div>
 
-        {/* CATEGORY B: PHYSICAL GIFT ITEMS (Text-Only Presentation) */}
+        {/* CATEGORY B: GIFTS IN KIND (Text-Only Presentation) */}
         <div className="mb-14">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
             <div>
@@ -370,7 +370,7 @@ export const GiftSection: React.FC = () => {
                 Category B
               </span>
               <h3 className="font-serif text-2xl sm:text-3xl text-forest-deep font-semibold">
-                Physical Gift Items
+                Gifts in Kind
               </h3>
               <p className="text-xs sm:text-sm text-charcoal/70">
                 Reserve a household item you would love to gift the couple for their new home.
@@ -586,7 +586,7 @@ export const GiftSection: React.FC = () => {
         )}
       </Modal>
 
-      {/* MODAL 2: Reserve Physical Gift Item (Text-Only Presentation) */}
+      {/* MODAL 2: Reserve Gifts in Kind Item (Text-Only Presentation) */}
       <Modal
         isOpen={isReserveModalOpen}
         onClose={() => {
@@ -695,7 +695,7 @@ export const GiftSection: React.FC = () => {
         )}
       </Modal>
 
-      {/* MODAL 3: Custom Physical Gift */}
+      {/* MODAL 3: Custom Gifts in Kind */}
       <Modal
         isOpen={isCustomGiftModalOpen}
         onClose={() => setIsCustomGiftModalOpen(false)}

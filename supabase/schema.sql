@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS events (
     display_order INT DEFAULT 0
 );
 
--- 7. PHYSICAL GIFT REGISTRY
+-- 7. GIFTS IN KIND REGISTRY
 CREATE TYPE gift_status AS ENUM ('Available', 'Reserved', 'Received');
 
 CREATE TABLE IF NOT EXISTS gift_items (

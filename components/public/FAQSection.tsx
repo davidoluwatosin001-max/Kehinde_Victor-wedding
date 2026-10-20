@@ -27,7 +27,7 @@ const faqs: FAQItem[] = [
   },
   {
     q: "How can I bless the couple with a gift?",
-    a: "Your presence and prayers are our greatest blessings. If you wish to give a gift, we have provided direct bank transfer details under 'Our Home & Future Fund' as well as a curated Physical Gift Registry where items can be reserved.",
+    a: "Your presence and prayers are our greatest blessings. If you wish to give a gift, we have provided direct bank transfer details under 'Our Home & Future Fund' as well as a curated Gifts in Kind Registry where items can be reserved.",
   },
   {
     q: "Who can I reach out to if I need travel or accommodation help?",

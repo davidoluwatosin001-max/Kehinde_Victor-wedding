@@ -100,7 +100,7 @@ const initialRSVPs: RSVP[] = [];
 
 const initialAccommodation: AccommodationRequest[] = [];
 
-// Curated 11 physical gift items (descriptions and cost prices removed as requested)
+// Curated 11 Gifts in Kind items (descriptions and cost prices removed as requested)
 const initialGifts: GiftItem[] = [
   {
     id: "gift-maxi-cooker",
@@ -663,7 +663,7 @@ export const store = {
     return req;
   },
 
-  // Physical Gift Items & Reservation Workflow
+  // Gifts in Kind Items & Reservation Workflow
   getGifts: async (availableOnly?: boolean): Promise<GiftItem[]> => {
     const db = await loadDatabase();
     if (availableOnly) {
@@ -822,7 +822,7 @@ export const store = {
     res.reviewedAt = new Date().toISOString();
     res.reviewedBy = adminUser || "Admin";
 
-    // Update physical gift item availability to Reserved
+    // Update Gifts in Kind item availability to Reserved
     gift.status = "Reserved";
     gift.reservedBy = res.guestName;
     gift.reservedEmail = res.email;

@@ -610,7 +610,7 @@ export default function AdminDashboardPage() {
               ? "border-amber-400 bg-amber-50/60 hover:border-amber-500"
               : "border-gold/40 hover:border-gold"
           }`}
-          title="Click to review and approve physical gift reservations"
+          title="Click to review and approve Gifts in Kind reservations"
         >
           <div className="flex justify-between items-center text-forest-deep mb-1">
             <span className="text-[11px] uppercase font-bold tracking-wider group-hover:text-forest transition-colors">
@@ -644,7 +644,7 @@ export default function AdminDashboardPage() {
             })`,
             icon: Clock,
           },
-          { id: "gifts", label: `Physical Items (${gifts.length})`, icon: Gift },
+          { id: "gifts", label: `Gifts in Kind (${gifts.length})`, icon: Gift },
           { id: "monetary", label: `Monetary Gifts (${monetaryGifts.length})`, icon: Coins },
           { id: "custom", label: `Custom Gifts (${customGifts.length})`, icon: HeartHandshake },
           { id: "guestbook", label: `Guestbook (${guestbook.length})`, icon: MessageSquareHeart },
@@ -744,7 +744,7 @@ export default function AdminDashboardPage() {
             <div className="card-luxury p-6 rounded-3xl border border-gold/40 shadow-sm space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="font-serif text-xl font-bold text-forest-deep">
-                  Physical Gifts Status
+                  Gifts in Kind Status
                 </h3>
                 <button
                   onClick={() => setActiveTab("gifts")}
@@ -1207,17 +1207,17 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* TAB 4: PHYSICAL GIFT ITEMS INVENTORY */}
+      {/* TAB 4: GIFTS IN KIND INVENTORY */}
       {activeTab === "gifts" && (
         <div className="space-y-6">
           <div className="card-luxury p-6 rounded-3xl border border-gold/40 shadow-sm space-y-4">
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
               <div>
                 <h3 className="font-serif text-xl font-bold text-forest-deep">
-                  Physical Gift Items Inventory ({gifts.length})
+                  Gifts in Kind Inventory ({gifts.length})
                 </h3>
                 <p className="text-xs text-charcoal/70">
-                  Curated wedding physical gift items and live registry status.
+                  Curated wedding Gifts in Kind items and live registry status.
                 </p>
               </div>
 
