@@ -72,7 +72,7 @@ export const ScheduleSection: React.FC = () => {
   };
 
   return (
-    <section id="schedule" className="py-16 sm:py-24 px-4 sm:px-6 bg-ivory/80 backdrop-blur-[1px] relative">
+    <section id="schedule" className="py-16 sm:py-24 px-4 sm:px-6 bg-ivory/40 relative">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">

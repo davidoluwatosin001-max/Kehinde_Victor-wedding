@@ -18,7 +18,7 @@ export const OurStorySection: React.FC<OurStorySectionProps> = ({
   ],
 }) => {
   return (
-    <section id="story" className="py-16 sm:py-24 px-4 sm:px-6 bg-[#FDFBF7]/80 backdrop-blur-[1px] relative overflow-hidden">
+    <section id="story" className="py-16 sm:py-24 px-4 sm:px-6 bg-[#FDFBF7]/40 relative overflow-hidden">
       <div className="max-w-5xl mx-auto">
         {/* Section Heading */}
         <div className="text-center mb-14">

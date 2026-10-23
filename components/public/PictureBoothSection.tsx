@@ -433,7 +433,7 @@ export const PictureBoothSection: React.FC = () => {
   const activePhoto = lightboxIndex !== null ? filteredPhotos[lightboxIndex] : null;
 
   return (
-    <section id="booth" className="py-20 sm:py-28 px-4 sm:px-6 bg-[#FAF4E6]/85 backdrop-blur-[2px] relative overflow-hidden">
+    <section id="booth" className="py-20 sm:py-28 px-4 sm:px-6 bg-[#FAF4E6]/40 relative overflow-hidden">
       {/* Decorative Background Accents */}
       <div className="absolute inset-0 pointer-events-none opacity-40">
         <div className="absolute top-10 -left-20 w-80 h-80 rounded-full bg-gold/15 blur-3xl" />

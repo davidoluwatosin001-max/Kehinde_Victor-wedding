@@ -280,7 +280,7 @@ export const RSVPSection: React.FC<RSVPSectionProps> = ({ initialCode = "" }) =>
   });
 
   return (
-    <section id="rsvp" className="py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden bg-ivory/80 backdrop-blur-[1px]">
+    <section id="rsvp" className="py-16 sm:py-24 px-4 sm:px-6 relative overflow-hidden bg-ivory/40">
       {/* Background ambient accents */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none opacity-40">
         <div className="absolute top-10 left-10 w-72 h-72 rounded-full bg-gold/10 blur-3xl" />

@@ -39,7 +39,7 @@ export const FAQSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faqs" className="py-16 sm:py-24 px-4 sm:px-6 bg-[#FDFBF7]/80 backdrop-blur-[1px] relative">
+    <section id="faqs" className="py-16 sm:py-24 px-4 sm:px-6 bg-[#FDFBF7]/40 relative">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <p className="font-sans text-xs sm:text-sm tracking-[0.25em] text-gold uppercase font-semibold">

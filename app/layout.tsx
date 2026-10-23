@@ -47,19 +47,19 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className="bg-[#FAF4E6] text-[#2B2823] antialiased selection:bg-gold/20 selection:text-forest-deep relative min-h-screen">
-        {/* Full-site Faint & Not So Blurry Background of Kehinde & Victor */}
+        {/* Full-site Faint & Romantic Background of Kehinde & Victor */}
         <div
           aria-hidden="true"
           className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
         >
           <div
-            className="absolute inset-0 bg-cover bg-top sm:bg-center bg-no-repeat opacity-[0.09] sm:opacity-[0.11]"
+            className="absolute inset-0 bg-cover bg-top sm:bg-center bg-no-repeat filter blur-[1px] opacity-[0.24] sm:opacity-[0.28]"
             style={{
               backgroundImage: "url('/images/site-background.jpg')",
             }}
           />
           {/* Subtle warm ivory gradient to harmonize with brand theme and preserve contrast */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#FAF4E6]/40 via-transparent to-[#FAF4E6]/40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#FAF4E6]/20 via-transparent to-[#FAF4E6]/25" />
         </div>
 
         <div className="relative z-10 flex flex-col min-h-screen">
