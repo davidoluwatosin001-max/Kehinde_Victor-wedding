@@ -73,36 +73,44 @@ export const BOOTH_PHOTOS: BoothPhoto[] = [
     caption: "Celebrating our rich heritage and the glorious beginning of a generational blessing.",
   },
   {
-    id: "modern-seated",
-    src: "/images/booth/booth-6-modern-seated.jpg",
-    title: "Quiet Intimacy",
+    id: "kehinde-elegance",
+    src: "/images/booth/booth-kehinde-elegance.jpg",
+    title: "Grace & Elegance",
     category: "modern",
     tag: "Modern Romance",
-    caption: "Our absolute favorite place in the whole world is simply right beside each other.",
+    caption: "Kehinde radiant in beauty, poised with royal grace and timeless sophistication.",
   },
   {
-    id: "modern-standing",
-    src: "/images/booth/booth-7-modern-standing.jpg",
-    title: "Radiant & Joyful",
+    id: "victor-agbada",
+    src: "/images/booth/booth-victor-agbada.jpg",
+    title: "Noble & Blessed",
     category: "modern",
     tag: "Modern Romance",
-    caption: "Two best friends, effortless laughter, and infectious joy built on genuine friendship.",
+    caption: "Victor poised in pure white agbada, smiling with humble gratitude and joyful anticipation.",
   },
   {
-    id: "modern-hug",
-    src: "/images/booth/booth-8-modern-hug.jpg",
-    title: "Endless Warmth",
+    id: "couple-car-selfie",
+    src: "/images/booth/booth-couple-car-selfie.jpg",
+    title: "Sweet Road Trips",
     category: "modern",
     tag: "Modern Romance",
-    caption: "Wrapped in an embrace that feels like peace, comfort, and home wherever we are.",
+    caption: "Everyday laughter, spontaneous road trips, and countless candid smiles together.",
   },
   {
-    id: "modern-gaze",
-    src: "/images/booth/booth-9-modern-gaze.jpg",
-    title: "Adoring Eyes",
+    id: "couple-purple-lace-radiant",
+    src: "/images/booth/booth-couple-purple-lace-radiant.jpg",
+    title: "Celebration in Lilac",
     category: "modern",
     tag: "Modern Romance",
-    caption: "Looking at God's greatest earthly gift with deep admiration and reverent wonder.",
+    caption: "Radiant smiles and matching hearts, dressed in celebration and joyous thanksgiving.",
+  },
+  {
+    id: "couple-purple-lace-portrait",
+    src: "/images/booth/booth-couple-purple-lace-portrait.jpg",
+    title: "Side by Side Forever",
+    category: "modern",
+    tag: "Modern Romance",
+    caption: "Standing united through every season and milestone, forever hand in hand.",
   },
 ];
 
@@ -119,17 +127,18 @@ export const PictureBoothSection: React.FC = () => {
     "trad-regal": 39,
     "trad-holding-hands": 48,
     "trad-fulllength": 61,
-    "modern-seated": 52,
-    "modern-standing": 45,
-    "modern-hug": 67,
-    "modern-gaze": 58,
+    "kehinde-elegance": 58,
+    "victor-agbada": 52,
+    "couple-car-selfie": 65,
+    "couple-purple-lace-radiant": 74,
+    "couple-purple-lace-portrait": 63,
   });
 
   // Photo strip state (3 selected photos)
   const [stripPhotoIds, setStripPhotoIds] = useState<string[]>([
     "trad-dance",
-    "modern-seated",
-    "trad-embrace",
+    "kehinde-elegance",
+    "couple-purple-lace-radiant",
   ]);
   const [stripTheme, setStripTheme] = useState<StripTheme>("ivory");
   const [isGeneratingStrip, setIsGeneratingStrip] = useState(false);
@@ -489,7 +498,7 @@ export const PictureBoothSection: React.FC = () => {
             }`}
           >
             <Smile className="w-3.5 h-3.5 text-gold" />
-            <span>Modern Romance (4)</span>
+            <span>Modern Romance ({BOOTH_PHOTOS.filter((p) => p.category === "modern").length})</span>
           </button>
 
           <button
