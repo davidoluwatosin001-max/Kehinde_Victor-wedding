@@ -4,6 +4,7 @@ import React from "react";
 import { Navbar } from "@/components/public/Navbar";
 import { HeroSection } from "@/components/public/HeroSection";
 import { OurStorySection } from "@/components/public/OurStorySection";
+import { PictureBoothSection } from "@/components/public/PictureBoothSection";
 import { ScheduleSection } from "@/components/public/ScheduleSection";
 import { RSVPSection } from "@/components/public/RSVPSection";
 import { GiftSection } from "@/components/public/GiftSection";
@@ -32,6 +33,9 @@ export default function HomePage() {
 
         {/* Our Story Editorial */}
         <OurStorySection />
+
+        {/* Mini Picture Booth & Photo Keepsakes */}
+        <PictureBoothSection />
 
         {/* Events Timeline & Dress Code Swatches */}
         <ScheduleSection />

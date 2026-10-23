@@ -56,7 +56,7 @@ export const OurStorySection: React.FC<OurStorySectionProps> = ({
               {/* Inset Photo of Kehinde & Victor */}
               <div className="absolute -bottom-6 -right-4 sm:-bottom-8 sm:-right-6 w-36 sm:w-44 aspect-[4/5] rounded-2xl overflow-hidden border-2 border-gold shadow-2xl bg-forest group">
                 <Image
-                  src="/images/couple.jpg"
+                  src="/images/our-story-couple.jpg"
                   alt="Kehinde Elizabeth & Victor Oluwatosin"
                   fill
                   className="object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-500"
